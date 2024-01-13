@@ -1,0 +1,282 @@
+<template>
+  <div>
+    <background-image :src="backgroundImage">
+      <app-bar-goat-gamer title="Home"></app-bar-goat-gamer>
+      <div class="online-view-center">
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field
+                :autofocus="true"
+                v-model="playerName"
+                outlined
+                height="100"
+                class="online-view-text-input"
+                label="Team Name"
+                hint="This will be seen by your opponent to confirm that they have the right opponent."
+                counter="20"
+                :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
+                color="white"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-card color="rgb(206, 121, 107)" dark>
+                <v-card-title class="text-h5">Create</v-card-title>
+
+                <v-card-subtitle> Game Settings </v-card-subtitle>
+
+                <v-card-text> TBD </v-card-text>
+
+                <v-card-actions>
+                  <v-btn
+                    variant="text"
+                    @click="createButtonPress"
+                    :loading="isCreating"
+                  >
+                    Create Game
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+            <v-col>
+              <v-card color="rgb(206, 121, 107)" dark>
+                <v-card-title class="text-h5">Join</v-card-title>
+                <v-card-subtitle>
+                  Enter the code that the opponent has sent you
+                </v-card-subtitle>
+                <v-card-text>
+                  <v-text-field
+                    v-model="joinCode"
+                    outlined
+                    label="Join Code"
+                    @input="joinCodeInput"
+                    maxlength="5"
+                    :rules="[
+                      joinCodeRules.required,
+                      joinCodeRules.validJoinCode,
+                    ]"
+                  >
+                  </v-text-field
+                ></v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    variant="text"
+                    @disabled="joinCodeValid"
+                    @click="joinButtonPress"
+                    :loading="isJoining"
+                  >
+                    Join Game
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
+      <v-overlay :z-index="0" v-model="showJoinLoadingOverlay">
+        <v-card loading class="online-view-overlay">
+          <v-img :src="waitingImage"></v-img>
+          <v-card-title>Waiting to Join Game...</v-card-title>
+
+          <v-card-text>
+            You have requested to join <b>{{ opponentsName }}</b
+            >'s game. Please wait as they choose to either accept or decline
+            your request.
+          </v-card-text>
+        </v-card>
+      </v-overlay>
+    </background-image>
+  </div>
+</template>
+
+<script setup lang="ts">
+import {
+  createOnlineMatch,
+  getOnlineMatchListener,
+} from "@/firebase/database/database";
+import { auth } from "@/firebase/firebase";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
+import BackgroundImage from "@/components/Background/BackgroundImage.vue";
+
+import waitingImage from "@/assets/images/outside.png";
+import backgroundImage from "@/assets/backgrounds/range-outside.png";
+import {
+  Match,
+  Player,
+  PlayerRequest,
+} from "@/firebase/database/database-interfaces";
+import {
+  VContainer,
+  VRow,
+  VCol,
+  VTextField,
+  VCard,
+  VCardTitle,
+  VCardSubtitle,
+  VCardText,
+  VCardActions,
+  VBtn,
+  VOverlay,
+  VImg,
+} from "vuetify/lib/components/index.mjs";
+import { requestJoinMatch } from "@/firebase/database/database-request";
+
+const router = useRouter();
+
+const playerName = ref("");
+const joinCode = ref("");
+const joinCodeValid = ref(false);
+
+const isCreating = ref(false);
+const isJoining = ref(false);
+const showJoinLoadingOverlay = ref(false);
+const opponentsName = ref("");
+
+const joinCodeRules = {
+  required: (value: string) => !!value || "Required.",
+  validJoinCode: (value: string) => {
+    const pattern = /[A-Z][A-Z][0-9][0-9][0-9]/;
+    return pattern.test(value) || "Invalid Join Code";
+  },
+  teamNameCount: (value: string) => value.length <= 20 || "Max 20 characters",
+};
+
+function createButtonPress() {
+  if (!isCreating.value) {
+    isCreating.value = true;
+    createOnlineMatch(playerName.value).then((joinCode: string) => {
+      isCreating.value = false;
+      router.push({
+        name: "onlineMatch",
+        params: { id: joinCode },
+      });
+    });
+  }
+}
+
+function joinButtonPress() {
+  isJoining.value = true;
+  if (joinCodeValid.value && playerName.value.length <= 20) {
+    requestJoinMatch(joinCode.value, playerName.value).then(
+      async (isRequestSuccess: boolean) => {
+        if (!isRequestSuccess) {
+          // Don't bother going further if request was not added
+          isJoining.value = false;
+          return;
+        }
+
+        showJoinLoadingOverlay.value = true;
+        const updater = (currentMatch: Match) => {
+          if (currentMatch === null || currentMatch === undefined) {
+            return;
+          }
+
+          // Update Overlay with Host Name
+          const host = currentMatch.playerList.find(
+            (player) => player.id === currentMatch.hostId,
+          );
+          if (host === undefined) {
+            opponentsName.value = "HOST-NAME-ERROR";
+          } else {
+            opponentsName.value = host.name;
+          }
+
+          // Check if Added to PlayerList
+          const currentUserId = auth.currentUser ? auth.currentUser.uid : "";
+          if (currentUserId == "") {
+            // Ignore if user is not logged in
+            return;
+          }
+          const currentPlayer = currentMatch.playerList.find(
+            (player: Player) => player.id === currentUserId,
+          );
+
+          if (currentPlayer !== undefined) {
+            // Player is in Player List
+            router.push({
+              name: "onlineMatch",
+              params: { id: joinCode.value },
+            });
+          }
+
+          // Check if Player is Removed from PlayerRequests
+          const userRequest: PlayerRequest = {
+            name: playerName.value,
+            id: currentUserId,
+          };
+          if (
+            !checkIfRequestStillExists(currentMatch.playerRequests, userRequest)
+          ) {
+            showJoinLoadingOverlay.value = false;
+            isJoining.value = false;
+            unsubscribe();
+          }
+        };
+
+        const accessDenied = () => {
+          // Function that is called when there is no data at location or access is forbidden
+          showJoinLoadingOverlay.value = false;
+          isJoining.value = false;
+        };
+        const unsubscribe = await getOnlineMatchListener(
+          joinCode.value,
+          updater,
+          accessDenied,
+        );
+      },
+    );
+  } else {
+    isJoining.value = false;
+  }
+}
+
+function joinCodeInput() {
+  joinCode.value = joinCode.value.toUpperCase();
+  if (joinCodeRules.validJoinCode(joinCode.value) !== "Invalid Join Code") {
+    joinCodeValid.value = true;
+  } else {
+    joinCodeValid.value = false;
+  }
+}
+
+function checkIfRequestStillExists(
+  requests: PlayerRequest[],
+  current: PlayerRequest,
+): boolean {
+  if (requests == null || requests == undefined) {
+    return false;
+  }
+  let output = false;
+  requests.forEach((value: PlayerRequest) => {
+    if (current.id === value.id) {
+      output = true;
+    }
+  });
+  return output;
+}
+</script>
+
+<style scoped lang="scss">
+.online-view-center {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px;
+}
+
+.online-view-overlay {
+  display: block;
+  transform: translate(50%, 50%);
+}
+
+.online-view-text-input {
+  font-size: 28px;
+}
+</style>

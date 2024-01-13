@@ -1,0 +1,198 @@
+<template>
+  <div>
+    <app-bar-goat-gamer title="Who Is the GOAT Gamer?"></app-bar-goat-gamer>
+    <v-container>
+      <v-row>
+        <v-col>
+          <v-row align-items="center">
+            <spinner-selector
+              :height="spinnerWidth"
+              :width="spinnerWidth"
+              :items="spinnerItems"
+              :setterFunction="setCurrentGame"
+            ></spinner-selector>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row align-items="center">
+            <game-list
+              :code="matchData ? matchData.code : ''"
+              :gameList="matchData ? matchData.gameList : []"
+              :is-disabled="
+                matchData ? matchData.state !== MatchState.GAME : false
+              "
+            ></game-list>
+          </v-row>
+          <v-row>
+            <v-col>
+              <leaderboard-display
+                :scoreDisplayArray="leaderboard"
+              ></leaderboard-display>
+            </v-col>
+            <v-col>
+              <chat-display
+                :code="matchData ? matchData.code : ''"
+                :chatLogs="matchData ? matchData?.chatLog : []"
+              ></chat-display>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+</template>
+
+<script setup lang="ts">
+import {
+  GameEntry,
+  GameHistory,
+  Match,
+  MatchState,
+  Player,
+} from "@/firebase/database/database-interfaces";
+import { VContainer, VRow, VCol } from "vuetify/lib/components/index.mjs";
+import { onMounted, ref } from "vue";
+import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
+import { useRouter } from "vue-router";
+import { auth } from "@/firebase/firebase";
+import { getOnlineMatchListener } from "@/firebase/database/database";
+import GameList from "@/components/GameList/GameList.vue";
+import SpinnerSelector from "@/components/Spinner/SpinnerSelector.vue";
+import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
+import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
+import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
+import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
+import { updateStateAndGameOnlineMatch } from "@/firebase/database/database-match";
+
+const props = defineProps({
+  code: {
+    type: String,
+    required: true,
+  },
+});
+
+const isHost = ref(false);
+const matchData = ref<Match | null>(null);
+const unsubscribeFunction = ref<() => void>(() => {});
+const spinnerItems = ref<SpinnerItem[]>([]);
+const leaderboard = ref<ScoreDisplay[]>([]);
+const spinnerWidth = ref(500);
+const spinnerHeight = ref(500);
+const router = useRouter();
+
+async function getMatch() {
+  const updater = (a: Match) => {
+    matchData.value = a;
+
+    const currentUser = auth.currentUser;
+    if (currentUser == null) {
+      console.log("Error, user not logged in");
+    }
+
+    // Check if user is still in the Match or not
+    if (currentUser) {
+      const filterForCurrentUser = matchData.value.playerList.filter(
+        (currentPlayer) => currentPlayer.id == currentUser.uid,
+      );
+      if (filterForCurrentUser.length == 0) {
+        // At this point, the user is no longer in the lobby
+        router.push("/online");
+      }
+    }
+
+    // Check if user is host
+    if (currentUser && currentUser.uid == a.hostId) {
+      isHost.value = true;
+    } else {
+      isHost.value = false;
+    }
+
+    // Update SpinnerItems
+    const updatedSpinnerItems = a.gameList.map((gameEntry) => {
+      return {
+        id: gameEntry.id,
+        label: gameEntry.name,
+        active: false,
+      };
+    });
+    console.log(updatedSpinnerItems);
+    spinnerItems.value = updatedSpinnerItems;
+
+    // Update ScoreDisplay
+    calculateScore(a);
+  };
+
+  const accessDenied = () => {
+    router.push("/online");
+  };
+
+  unsubscribeFunction.value = await getOnlineMatchListener(
+    props.code,
+    updater,
+    accessDenied,
+  );
+}
+
+function calculateScore(matchData: Match) {
+  // Create Initial Players
+  const map = new Map(
+    matchData.playerList.map((player: Player) => {
+      return [player.id, { name: player.name, score: 0 }];
+    }),
+  );
+
+  matchData.gameHistory.forEach((history: GameHistory) => {
+    history.points.forEach((pointHistory) => {
+      const storedValue = map.get(pointHistory.playerId);
+      if (storedValue) {
+        storedValue.score += pointHistory.points;
+      }
+    });
+  });
+
+  // Convert to Array
+  const calculatedLeaderboard = [...map].map(([id, value]) => ({
+    playerName: value.name,
+    playerId: id,
+    score: value.score,
+  }));
+
+  leaderboard.value = calculatedLeaderboard.sort((o1, o2) => {
+    if (o1.score > o2.score) {
+      return 1;
+    } else if (o1.score < o2.score) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+}
+
+const setCurrentGame = async (item: SpinnerItem) => {
+  // Get GameEntry from id
+  const game = matchData.value?.gameList.find((game) => game.id === item.id);
+
+  if (game) {
+    await updateStateAndGameOnlineMatch(
+      props.code,
+      MatchState.AWAIT_ACCEPTANCE,
+      game,
+    );
+  }
+};
+
+onMounted(() => {
+  getMatch();
+});
+</script>
+
+<style scoped lang="scss">
+.online-view-pick-ban-center {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px;
+}
+</style>
