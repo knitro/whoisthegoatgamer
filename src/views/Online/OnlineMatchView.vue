@@ -19,7 +19,7 @@
       :code="props.id"
     ></online-match-gameplay-view>
 
-    <v-overlay :z-index="0" v-model="showAcceptanceOverlay">
+    <v-overlay :z-index="0" v-model="showAcceptanceOverlay" persistent>
       <v-card :loading="hasReady" class="online-view-overlay">
         <v-img :src="WaitingImage"></v-img>
         <v-card-title>Confirm Game</v-card-title>
@@ -55,7 +55,7 @@
       </v-card>
     </v-overlay>
 
-    <v-overlay :z-index="0" v-model="showResultsOverlay">
+    <v-overlay :z-index="0" v-model="showResultsOverlay" persistent>
       <v-card :loading="hasReady" class="online-view-overlay">
         <v-img :src="WaitingImage"></v-img>
         <v-card-title>Results Confirmation</v-card-title>

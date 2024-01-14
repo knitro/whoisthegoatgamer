@@ -76,7 +76,7 @@
           </v-row>
         </v-container>
       </div>
-      <v-overlay :z-index="0" v-model="showJoinLoadingOverlay">
+      <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
         <v-card loading class="online-view-overlay">
           <v-img :src="waitingImage"></v-img>
           <v-card-title>Waiting to Join Game...</v-card-title>

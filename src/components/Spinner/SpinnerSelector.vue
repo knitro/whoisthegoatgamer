@@ -58,7 +58,6 @@
 <script setup lang="ts">
 import { PropType, ref } from "vue";
 import { SpinnerItem } from "./SpinnerInterfaces";
-import SpinnerOption from "./SpinnerOption.vue";
 import { stringToColour } from "@/logic/string-to-colour";
 
 const props = defineProps({
@@ -116,7 +115,6 @@ function pickRandomItem() {
       return;
     }
     reset();
-    state.value = State.DISPLAY_RESULT;
     props.setterFunction(selectedItem.value);
   };
 
