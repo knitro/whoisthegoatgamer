@@ -6,8 +6,17 @@
     min-width="100%"
   >
     <v-list>
-      <v-list-item v-for="gameName in gameList" v-bind:key="'game_' + gameName">
-        {{ gameName.name }}
+      <v-list-item v-for="game in gameList" v-bind:key="'game_' + game">
+        {{ game.name }}
+        <template v-slot:append>
+          <v-btn
+            v-if="!isDisabled"
+            @click="removeGameListOnlineMatch(code, game.id)"
+            variant="text"
+            color="red"
+            icon="mdi-delete"
+          ></v-btn>
+        </template>
       </v-list-item>
     </v-list>
     <v-card-actions>
@@ -19,6 +28,7 @@
         clearable
         label="Add Game"
         type="text"
+        @keydown.enter="addGame"
         @click:append="addGame"
         @click:clear="clearTextField"
         :disabled="isDisabled"
@@ -36,7 +46,10 @@ import {
   VListItem,
 } from "vuetify/lib/components/index.mjs";
 import { PropType, ref } from "vue";
-import { addGameListOnlineMatch } from "@/firebase/database/database-match";
+import {
+  addGameListOnlineMatch,
+  removeGameListOnlineMatch,
+} from "@/firebase/database/database-match";
 import { GameEntry } from "@/firebase/database/database-interfaces";
 
 const props = defineProps({

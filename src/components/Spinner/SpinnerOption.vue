@@ -1,19 +1,4 @@
-<template>
-  <div
-    class="spinner-option"
-    :style="
-      'transform: rotate(' +
-      itemRotation +
-      'deg);' +
-      'background: ' +
-      colours.backgroundColour
-    "
-  >
-    <span class="label" :style="'transform: rotate(' + rotationFactor + 'deg)'">
-      {{ label }}
-    </span>
-  </div>
-</template>
+<template></template>
 
 <script setup lang="ts">
 import { stringToColour } from "../../logic/string-to-colour";

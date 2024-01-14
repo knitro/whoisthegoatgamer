@@ -6,8 +6,6 @@
         <v-col>
           <v-row align-items="center">
             <spinner-selector
-              :height="spinnerWidth"
-              :width="spinnerWidth"
               :items="spinnerItems"
               :setterFunction="setCurrentGame"
             ></spinner-selector>
@@ -76,8 +74,7 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
 const leaderboard = ref<ScoreDisplay[]>([]);
-const spinnerWidth = ref(500);
-const spinnerHeight = ref(500);
+
 const router = useRouter();
 
 async function getMatch() {

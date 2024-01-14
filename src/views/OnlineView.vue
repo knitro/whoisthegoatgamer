@@ -12,7 +12,7 @@
                 outlined
                 height="100"
                 class="online-view-text-input"
-                label="Team Name"
+                label="Player Name"
                 hint="This will be seen by your opponent to confirm that they have the right opponent."
                 counter="20"
                 :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"

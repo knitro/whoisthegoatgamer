@@ -1,67 +1,57 @@
 <template>
   <div>
-    <v-container>
-      <v-row>
-        <div class="spinner-container">
-          <div
-            class="wheel"
-            :style="{
-              height: height + 'px',
-              width: width + 'px',
-              transition: wheelStyleSpeed,
-              transform: wheelStyleRotation,
-            }"
+    <div class="spinner-container">
+      <div
+        class="wheel"
+        :style="{
+          height: spinnerWidth + 'px',
+          width: spinnerWidth + 'px',
+          transition: wheelStyleSpeed,
+          transform: wheelStyleRotation,
+        }"
+      >
+        <div
+          v-for="(item, index) in items"
+          v-bind:key="item.label + '-' + index"
+          class="spinner-option"
+          :style="
+            'transform: rotate(' +
+            (360 * index) / items.length +
+            'deg);' +
+            'background: ' +
+            stringToColour(item.label).backgroundColour
+          "
+        >
+          <span
+            class="label"
+            :style="'transform: rotate(' + 360 / items.length + 'deg)'"
           >
-            <spinner-option
-              v-for="(item, index) in items"
-              v-bind:key="item.label + '-' + index"
-              :label="item.label + index"
-              :isSelected="false"
-              :index="index"
-              :numOfItems="items.length"
-            ></spinner-option>
-          </div>
-          <div
-            class="pointer"
-            :style="{
-              height: height + 'px',
-              width: width + 'px',
-            }"
-          ></div>
+            {{ item.label + index }}
+          </span>
         </div>
-      </v-row>
-      <v-row>
-        <v-btn
-          x-large
-          color="deep-purple"
-          dark
-          @click="pickRandomItem"
-          class="spinner-selector-random-button"
-          :min-height="70"
-          :max-height="70"
-          :min-width="600"
-          :max-width="600"
-          v-show="state == 0"
-          :disabled="items.length <= 1"
-        >
-          Pick a Random Map
-        </v-btn>
-        <v-btn
-          x-large
-          color="deep-purple"
-          dark
-          @click="reset"
-          class="spinner-selector-random-button"
-          :min-height="70"
-          :max-height="70"
-          :min-width="600"
-          :max-width="600"
-          v-show="state == State.DISPLAY_RESULT"
-        >
-          Re-Roll
-        </v-btn>
-      </v-row>
-    </v-container>
+      </div>
+      <div
+        class="pointer"
+        :style="{
+          height: spinnerWidth + 'px',
+          width: spinnerWidth + 'px',
+        }"
+      ></div>
+    </div>
+    <v-btn
+      block
+      x-large
+      color="deep-purple"
+      dark
+      @click="pickRandomItem"
+      class="spinner-selector-random-button"
+      :min-height="70"
+      :max-height="70"
+      v-show="state == 0"
+      :disabled="items.length <= 1"
+    >
+      Pick a Random Map
+    </v-btn>
   </div>
 </template>
 
@@ -69,17 +59,9 @@
 import { PropType, ref } from "vue";
 import { SpinnerItem } from "./SpinnerInterfaces";
 import SpinnerOption from "./SpinnerOption.vue";
-import { GameEntry } from "@/firebase/database/database-interfaces";
+import { stringToColour } from "@/logic/string-to-colour";
 
 const props = defineProps({
-  width: {
-    type: Number,
-    required: true,
-  },
-  height: {
-    type: Number,
-    required: true,
-  },
   items: {
     type: Array as PropType<SpinnerItem[]>,
     default: () => [], // use a factory function
@@ -101,6 +83,9 @@ const selectedItem = ref<SpinnerItem | null>(null);
 const state = ref<State>(State.STAND_BY);
 const wheelStyleRotation = ref("");
 const wheelStyleSpeed = ref("");
+const spinnerWidth = ref(500);
+
+// const spinnerContainer = ref(null);
 
 //Spinner Variables
 
@@ -130,6 +115,7 @@ function pickRandomItem() {
       console.log("ERROR: Selected Item is null");
       return;
     }
+    reset();
     state.value = State.DISPLAY_RESULT;
     props.setterFunction(selectedItem.value);
   };
@@ -150,7 +136,20 @@ function reset() {
   wheelStyleRotation.value = "rotate(0deg)";
 }
 
-console.log(props.items);
+// function resizeSpinner() {
+//   const { width, height } = useElementSize(button.valu);
+//   spinnerWidth.value = width.value;
+//   console.log(spinnerWidth.value);
+// }
+
+// onMounted(() => {
+//   window.addEventListener("resize", resizeSpinner);
+//   resizeSpinner();
+// });
+
+// onUnmounted(() => {
+//   window.removeEventListener("resize", resizeSpinner);
+// });
 </script>
 
 <style scoped lang="scss">
@@ -177,5 +176,26 @@ console.log(props.items);
 
   background: red;
 }
+
+.spinner-option .label {
+  position: relative;
+}
+
+.spinner-option {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: bottom right;
+  display: flex;
+  justify-content: center;
+  clip-path: polygon(
+    0 0,
+    54% 0,
+    100% 100%,
+    0 54%
+  ); // See https://bennettfeely.com/clippy/
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+}
 </style>
-./SpinnerInterfaces

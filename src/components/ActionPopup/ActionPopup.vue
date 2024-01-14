@@ -27,43 +27,37 @@
   </Transition>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Vue, { PropType } from "vue";
 import router from "@/router";
 import { ActionPopupOptions } from "./ActionPopupInterfaces";
 
-export default Vue.extend({
-  name: "ActionPopup",
-
-  components: {},
-  props: {
-    image: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    subtitle: {
-      type: String,
-      required: true,
-    },
-    options: {
-      type: Array as PropType<ActionPopupOptions[]>,
-      required: true,
-    },
-    show: {
-      type: Boolean,
-      required: true,
-    },
+const props = defineProps({
+  image: {
+    type: String,
+    required: true,
   },
-  methods: {
-    linkToPage(href: string) {
-      router.push(href);
-    },
+  title: {
+    type: String,
+    required: true,
+  },
+  subtitle: {
+    type: String,
+    required: true,
+  },
+  options: {
+    type: Array as PropType<ActionPopupOptions[]>,
+    required: true,
+  },
+  show: {
+    type: Boolean,
+    required: true,
   },
 });
+
+function linkToPage(href: string) {
+  router.push(href);
+}
 </script>
 
 <style scoped lang="scss">
