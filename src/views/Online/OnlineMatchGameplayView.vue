@@ -12,13 +12,21 @@
               >
                 {{ player.player.name }}
                 <template v-slot:append>
-                  <v-btn @click="updateScore(player, -1)" :disabled="!isHost"
-                    >-</v-btn
-                  >
-                  {{ player.score }}
-                  <v-btn @click="updateScore(player, 1)" :disabled="!isHost"
-                    >+</v-btn
-                  >
+                  <v-btn
+                    @click="updateScore(player, -1)"
+                    :disabled="!isHost"
+                    density="compact"
+                    icon="mdi-minus"
+                  ></v-btn>
+                  <div class="score-display">
+                    {{ player.score }}
+                  </div>
+                  <v-btn
+                    @click="updateScore(player, 1)"
+                    :disabled="!isHost"
+                    density="compact"
+                    icon="mdi-plus"
+                  ></v-btn>
                 </template>
               </v-list-item>
             </v-list>
@@ -217,5 +225,10 @@ onMounted(() => {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 1000px;
+}
+
+.score-display {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 </style>
