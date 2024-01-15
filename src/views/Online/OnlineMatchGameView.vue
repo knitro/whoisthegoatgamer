@@ -175,9 +175,9 @@ async function calculateScore(matchData: Match) {
 
   leaderboard.value = calculatedLeaderboard.sort((o1, o2) => {
     if (o1.score > o2.score) {
-      return 1;
-    } else if (o1.score < o2.score) {
       return -1;
+    } else if (o1.score < o2.score) {
+      return 1;
     } else {
       return 0;
     }
