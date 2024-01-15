@@ -36,11 +36,11 @@
                     <v-list-item
                       v-bind="props"
                       prepend-icon="mdi-controller"
-                      :title="'Game ' + index + ': ' + history.name"
+                      :title="'Game ' + (index + 1) + ': ' + history.name"
                     ></v-list-item>
                   </template>
                   <v-list-item
-                    v-for="(playerScore, index) in history.points"
+                    v-for="playerScore in history.points"
                     v-bind:key="
                       'score_' + history.id + '_' + playerScore.playerId
                     "
@@ -76,18 +76,7 @@ import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDispl
 import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import { updateStateOnlineMatch } from "@/firebase/database/database-match";
 import ConfettiExplosion from "vue-confetti-explosion";
-import {
-  VCard,
-  VImg,
-  VCardTitle,
-  VCardSubtitle,
-  VExpandTransition,
-  VDivider,
-  VList,
-  VBtn,
-  VListSubheader,
-  VListItem,
-} from "vuetify/lib/components/index.mjs";
+import { VCard, VList, VListItem } from "vuetify/lib/components/index.mjs";
 
 const props = defineProps({
   code: {
