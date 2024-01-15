@@ -1,7 +1,7 @@
 <template>
   <div>
     <app-bar-goat-gamer title="Who Is the GOAT Gamer?"></app-bar-goat-gamer>
-    <v-container>
+    <v-container fluid>
       <v-row>
         <v-col>
           <v-card title="Scoring" min-height="100%" min-width="100%">

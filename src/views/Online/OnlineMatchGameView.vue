@@ -1,17 +1,15 @@
 <template>
   <div>
     <app-bar-goat-gamer title="Who Is the GOAT Gamer?"></app-bar-goat-gamer>
-    <v-container>
+    <v-container fluid>
       <v-row>
-        <v-col>
-          <v-row align-items="center">
-            <spinner-selector
-              :items="spinnerItems"
-              :setterFunction="setCurrentGame"
-            ></spinner-selector>
-          </v-row>
+        <v-col cols="6">
+          <scroller-selector
+            :items="spinnerItems"
+            :setterFunction="setCurrentGame"
+          ></scroller-selector>
         </v-col>
-        <v-col>
+        <v-col cols="6">
           <v-row align-items="center">
             <game-list
               :code="matchData ? matchData.code : ''"
@@ -22,12 +20,12 @@
             ></game-list>
           </v-row>
           <v-row>
-            <v-col>
+            <v-col cols="6">
               <leaderboard-display
                 :scoreDisplayArray="leaderboard"
               ></leaderboard-display>
             </v-col>
-            <v-col>
+            <v-col cols="6">
               <chat-display
                 :code="matchData ? matchData.code : ''"
                 :chatLogs="matchData ? matchData?.chatLog : []"
@@ -55,7 +53,7 @@ import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";
 import GameList from "@/components/GameList/GameList.vue";
-import SpinnerSelector from "@/components/Spinner/SpinnerSelector.vue";
+import ScrollerSelector from "@/components/Spinner/ScrollerSelector.vue";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
 import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
 import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
