@@ -38,7 +38,12 @@
 
         <v-col cols="6">
           <v-col cols="12">
-            <v-card title="Scoring" min-height="100%" min-width="100%">
+            <v-card
+              title="Scoring"
+              subtitle="Assign points when the game is finished"
+              min-height="100%"
+              min-width="100%"
+            >
               <v-list>
                 <v-list-item
                   v-for="player in playerList"

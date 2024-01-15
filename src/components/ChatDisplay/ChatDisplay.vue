@@ -3,7 +3,7 @@
     title="Chat"
     class="overflow-y-auto"
     max-height="400px"
-    subtitle="TBD"
+    subtitle="Functionality TBD"
   >
   </v-card>
 </template>
