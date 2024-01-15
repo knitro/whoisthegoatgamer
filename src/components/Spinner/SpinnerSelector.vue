@@ -125,29 +125,12 @@ function pickRandomItem() {
     setTimeout(displayResultCallback, delayBeforeResultDisplay);
   };
   setTimeout(finishedRollingCallback, time * 1000, selectedIndex);
-
-  console.log(selectedIndex);
 }
 
 function reset() {
   state.value = State.STAND_BY;
   wheelStyleRotation.value = "rotate(0deg)";
 }
-
-// function resizeSpinner() {
-//   const { width, height } = useElementSize(button.valu);
-//   spinnerWidth.value = width.value;
-//   console.log(spinnerWidth.value);
-// }
-
-// onMounted(() => {
-//   window.addEventListener("resize", resizeSpinner);
-//   resizeSpinner();
-// });
-
-// onUnmounted(() => {
-//   window.removeEventListener("resize", resizeSpinner);
-// });
 </script>
 
 <style scoped lang="scss">

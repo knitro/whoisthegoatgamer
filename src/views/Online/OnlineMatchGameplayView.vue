@@ -22,13 +22,13 @@
             </v-card>
           </v-col>
           <v-row>
-            <v-col cols="6">
+            <v-col cols="7">
               <chat-display
                 :code="matchData ? matchData.code : ''"
                 :chatLogs="matchData ? matchData?.chatLog : []"
               ></chat-display>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="5">
               <leaderboard-display
                 :scoreDisplayArray="leaderboard"
               ></leaderboard-display>

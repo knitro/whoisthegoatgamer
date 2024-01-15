@@ -163,7 +163,6 @@ const router = useRouter();
 async function getMatch() {
   const updater = (a: Match) => {
     matchData.value = a;
-    console.log("Lobby");
     const currentUser = auth.currentUser;
     if (currentUser == null) {
       console.log("Error, user not logged in");

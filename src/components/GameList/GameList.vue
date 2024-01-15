@@ -66,7 +66,6 @@ const props = defineProps({
   },
 });
 
-console.log(props.gameList);
 const gameEntry = ref("");
 
 function clearTextField() {
