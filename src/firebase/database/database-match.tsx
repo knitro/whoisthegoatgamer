@@ -1,6 +1,8 @@
 import { child, get, push, ref, set, update } from "firebase/database";
 import { auth, db } from "../firebase";
 import {
+  ChatLog,
+  ChatLogFirebaseObject,
   GameEntry,
   GameHistory,
   Match,
@@ -92,6 +94,54 @@ export async function updateCurrentGameOnlineMatch(
   return update(currentGamePointsRef, {
     points: playerPoints,
   })
+    .then(() => {
+      // Data saved successfully!
+      return true;
+    })
+    .catch((error) => {
+      // The write failed...
+      return false;
+    });
+}
+
+export async function addToChatHistoryOnlineMatch(
+  joinCode: string,
+  currentMessage: string,
+) {
+  if (auth.currentUser == null) {
+    return;
+  }
+
+  const chatLogRef = ref(db, `series/${joinCode}/chatLog`);
+  const newItemRef = push(chatLogRef);
+  const chatToSave: ChatLogFirebaseObject = {
+    message: currentMessage,
+    authorId: auth.currentUser.uid,
+  };
+
+  return set(newItemRef, chatToSave)
+    .then(() => {
+      // Data saved successfully!
+      return true;
+    })
+    .catch((error) => {
+      // The write failed...
+      return false;
+    });
+}
+
+export async function addToChatHistoryBotOnlineMatch(
+  joinCode: string,
+  currentMessage: string,
+) {
+  const chatLogRef = ref(db, `series/${joinCode}/chatLog`);
+  const newItemRef = push(chatLogRef);
+  const chatToSave: ChatLogFirebaseObject = {
+    message: currentMessage,
+    authorId: "match-bot",
+  };
+
+  return set(newItemRef, chatToSave)
     .then(() => {
       // Data saved successfully!
       return true;

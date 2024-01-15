@@ -60,7 +60,6 @@ export async function createOnlineMatch(
   // Create GameList Object
   // This is done to reduce the depth of the RealTimeDatabase as arrays create indices of '0', '1' etc.
   const gameListArray = getPreset(preset);
-  console.log(gameListArray);
   const gameListObj: Record<string, any> = {};
   gameListArray.forEach((gameEntry) => {
     gameListObj[gameEntry.id] = {

@@ -7,13 +7,11 @@ export enum PresetOption {
 }
 
 export function getPreset(option: PresetOption): GameEntry[] {
-  console.log(option);
   switch (option) {
     case PresetOption.DUEL: {
       const cjCopy = [...CJ_GAMES];
       const standardCopy = [...STANDARD_GAMES];
       const duel = cjCopy.concat(standardCopy);
-      console.log(duel);
       return duel;
     }
     case PresetOption.FOUR: {

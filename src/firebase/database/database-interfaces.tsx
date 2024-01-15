@@ -34,7 +34,7 @@ export interface GameEntry {
 }
 
 export interface ChatLog {
-  // TODO
+  id: string;
   message: string;
   authorId: string;
 }
@@ -109,4 +109,14 @@ export interface PlayerFirebaseObject {
  */
 export interface PlayerRequestFirebaseObject {
   name: string;
+}
+
+/**
+ * Use this interface only to create a ChatLog to send to Firebase
+ * This should be the same as ChatLog, except it does not include:
+ *  - id
+ */
+export interface ChatLogFirebaseObject {
+  message: string;
+  authorId: string;
 }

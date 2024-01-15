@@ -11,6 +11,11 @@
         v-bind:key="'score_' + scoreDisplay.playerId"
       >
         <template v-slot:prepend>
+          <v-avatar color="grey-lighten-1" class="margin-right-8">
+            <v-img
+              :src="'https://robohash.org/' + scoreDisplay.playerId + '.png'"
+            />
+          </v-avatar>
           <v-icon :icon="getIcon(index)" :color="getColour(index)"></v-icon>
         </template>
         <template v-slot:append>
@@ -61,4 +66,8 @@ function getColour(index: number) {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.margin-right-8 {
+  margin-right: 8px;
+}
+</style>

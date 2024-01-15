@@ -15,6 +15,7 @@
               <chat-display
                 :code="matchData ? matchData.code : ''"
                 :chatLogs="matchData ? matchData?.chatLog : []"
+                :player-id-name-mapping="idNameMap"
               ></chat-display>
             </v-col>
             <v-col cols="5">
@@ -61,6 +62,7 @@ import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
 import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
 import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import {
+  addToChatHistoryBotOnlineMatch,
   updateStateAndGameOnlineMatch,
   updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
@@ -77,6 +79,7 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
 const leaderboard = ref<ScoreDisplay[]>([]);
+const idNameMap = ref<Map<string, string>>(new Map());
 
 const router = useRouter();
 
@@ -107,6 +110,13 @@ async function getMatch() {
       isHost.value = false;
     }
 
+    // Get Player ID-Name Mapping
+    idNameMap.value = new Map(
+      a.playerList.map((player: Player) => {
+        return [player.id, player.name];
+      }),
+    );
+
     // Update SpinnerItems
     const updatedSpinnerItems = a.gameList.map((gameEntry) => {
       return {
@@ -133,6 +143,10 @@ async function getMatch() {
 }
 
 async function calculateScore(matchData: Match) {
+  if (matchData == null || matchData.playerList == null) {
+    return;
+  }
+
   // Create Initial Players
   const map = new Map(
     matchData.playerList.map((player: Player) => {
@@ -140,14 +154,17 @@ async function calculateScore(matchData: Match) {
     }),
   );
 
-  matchData.gameHistory.forEach((history: GameHistory) => {
-    history.points.forEach((pointHistory) => {
-      const storedValue = map.get(pointHistory.playerId);
-      if (storedValue) {
-        storedValue.score += pointHistory.points;
-      }
+  // Add Game History Scores if they exist
+  if (matchData.gameHistory) {
+    matchData.gameHistory.forEach((history: GameHistory) => {
+      history.points.forEach((pointHistory) => {
+        const storedValue = map.get(pointHistory.playerId);
+        if (storedValue) {
+          storedValue.score += pointHistory.points;
+        }
+      });
     });
-  });
+  }
 
   // Convert to Array
   const calculatedLeaderboard = [...map].map(([id, value]) => ({
@@ -176,6 +193,10 @@ const setCurrentGame = async (item: SpinnerItem) => {
   const game = matchData.value?.gameList.find((game) => game.id === item.id);
 
   if (game) {
+    if (game.link && game.link != "") {
+      console.log("Bot Chatter");
+      await addToChatHistoryBotOnlineMatch(props.code, game.link);
+    }
     await updateStateAndGameOnlineMatch(
       props.code,
       MatchState.AWAIT_ACCEPTANCE,

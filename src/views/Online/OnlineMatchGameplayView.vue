@@ -26,6 +26,7 @@
               <chat-display
                 :code="matchData ? matchData.code : ''"
                 :chatLogs="matchData ? matchData?.chatLog : []"
+                :player-id-name-mapping="idNameMap"
               ></chat-display>
             </v-col>
             <v-col cols="5">
@@ -49,6 +50,15 @@
                   v-for="player in playerList"
                   v-bind:key="'scoring_' + player.player.id"
                 >
+                  <template v-slot:prepend>
+                    <v-avatar color="grey-lighten-1">
+                      <v-img
+                        :src="
+                          'https://robohash.org/' + player.player.id + '.png'
+                        "
+                      />
+                    </v-avatar>
+                  </template>
                   {{ player.player.name }}
                   <template v-slot:append>
                     <v-btn
@@ -128,6 +138,7 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const leaderboard = ref<ScoreDisplay[]>([]);
 const router = useRouter();
+const idNameMap = ref<Map<string, string>>(new Map());
 
 const playerList = ref<PlayerAndScore[]>([]);
 
@@ -157,6 +168,13 @@ async function getMatch() {
     } else {
       isHost.value = false;
     }
+
+    // Get Player ID-Name Mapping
+    idNameMap.value = new Map(
+      a.playerList.map((player: Player) => {
+        return [player.id, player.name];
+      }),
+    );
 
     // Set Player Scores
     setPlayerAndScores(a.playerList);
