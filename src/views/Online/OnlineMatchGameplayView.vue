@@ -116,7 +116,6 @@ import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
 import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import {
   updateCurrentGameOnlineMatch,
-  updateStateAndGameOnlineMatch,
   updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
 import { stringToColour } from "@/logic/string-to-colour";
@@ -227,6 +226,7 @@ function calculateScore(matchData: Match) {
       return 0;
     }
   });
+}
 
 function setPlayerAndScores(matchPlayers: Player[]) {
   const existingPlayerIds = playerList.value.map((player) => {
