@@ -5,35 +5,54 @@
       <v-row>
         <v-col cols="6">
           <v-col cols="12">
-            <scroller-selector
-              :items="spinnerItems"
-              :setterFunction="setCurrentGame"
-            ></scroller-selector>
+            <v-card class="goat-card">
+              <span class="name">
+                <v-icon icon="mdi-trophy"></v-icon>
+                {{
+                  leaderboard.length > 0 ? leaderboard[0].playerName : "ERROR"
+                }}
+                <v-icon icon="mdi-trophy"></v-icon>
+              </span>
+              <br />
+              <span class="underlabel">is the GOAT Gamer</span>
+            </v-card>
           </v-col>
-          <v-row>
-            <v-col cols="6">
-              <chat-display
-                :code="matchData ? matchData.code : ''"
-                :chatLogs="matchData ? matchData?.chatLog : []"
-              ></chat-display>
-            </v-col>
-            <v-col cols="6">
-              <leaderboard-display
-                :scoreDisplayArray="leaderboard"
-              ></leaderboard-display>
-            </v-col>
-          </v-row>
+          <v-col cols="12">
+            <leaderboard-display
+              :scoreDisplayArray="leaderboard"
+            ></leaderboard-display>
+          </v-col>
         </v-col>
-
+        <ConfettiExplosion :particleCount="300" :duration="15000" :force="1" />
         <v-col cols="6">
           <v-col cols="12">
-            <game-list
-              :code="matchData ? matchData.code : ''"
-              :gameList="matchData ? matchData.gameList : []"
-              :is-disabled="
-                matchData ? matchData.state !== MatchState.GAME : false
-              "
-            ></game-list>
+            <v-card title="Game History">
+              <v-list>
+                <v-list-group
+                  v-for="(history, index) in matchData?.gameHistory"
+                  v-bind:key="'history_' + history.id"
+                >
+                  <template v-slot:activator="{ props }">
+                    <v-list-item
+                      v-bind="props"
+                      prepend-icon="mdi-controller"
+                      :title="'Game ' + index + ': ' + history.name"
+                    ></v-list-item>
+                  </template>
+                  <v-list-item
+                    v-for="(playerScore, index) in history.points"
+                    v-bind:key="
+                      'score_' + history.id + '_' + playerScore.playerId
+                    "
+                    :title="idNameMap.get(playerScore.playerId)"
+                  >
+                    <template v-slot:append>
+                      {{ playerScore.points }} pts
+                    </template>
+                  </v-list-item>
+                </v-list-group>
+              </v-list>
+            </v-card>
           </v-col>
         </v-col>
       </v-row>
@@ -48,22 +67,27 @@ import {
   MatchState,
   Player,
 } from "@/firebase/database/database-interfaces";
-import { VContainer, VRow, VCol } from "vuetify/lib/components/index.mjs";
 import { onMounted, ref } from "vue";
 import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";
-import GameList from "@/components/GameList/GameList.vue";
-import ScrollerSelector from "@/components/Spinner/ScrollerSelector.vue";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
-import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
-import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
 import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
+import { updateStateOnlineMatch } from "@/firebase/database/database-match";
+import ConfettiExplosion from "vue-confetti-explosion";
 import {
-  updateStateAndGameOnlineMatch,
-  updateStateOnlineMatch,
-} from "@/firebase/database/database-match";
+  VCard,
+  VImg,
+  VCardTitle,
+  VCardSubtitle,
+  VExpandTransition,
+  VDivider,
+  VList,
+  VBtn,
+  VListSubheader,
+  VListItem,
+} from "vuetify/lib/components/index.mjs";
 
 const props = defineProps({
   code: {
@@ -75,8 +99,8 @@ const props = defineProps({
 const isHost = ref(false);
 const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
-const spinnerItems = ref<SpinnerItem[]>([]);
 const leaderboard = ref<ScoreDisplay[]>([]);
+const idNameMap = ref<Map<string, string>>(new Map());
 
 const router = useRouter();
 
@@ -107,16 +131,12 @@ async function getMatch() {
       isHost.value = false;
     }
 
-    // Update SpinnerItems
-    const updatedSpinnerItems = a.gameList.map((gameEntry) => {
-      return {
-        id: gameEntry.id,
-        label: gameEntry.name,
-        active: false,
-      };
-    });
-    console.log(updatedSpinnerItems);
-    spinnerItems.value = updatedSpinnerItems;
+    // Get Player ID-Name Mapping
+    idNameMap.value = new Map(
+      a.playerList.map((player: Player) => {
+        return [player.id, player.name];
+      }),
+    );
 
     // Update ScoreDisplay
     await calculateScore(a);
@@ -172,31 +192,21 @@ async function calculateScore(matchData: Match) {
   }
 }
 
-const setCurrentGame = async (item: SpinnerItem) => {
-  // Get GameEntry from id
-  const game = matchData.value?.gameList.find((game) => game.id === item.id);
-
-  if (game) {
-    await updateStateAndGameOnlineMatch(
-      props.code,
-      MatchState.AWAIT_ACCEPTANCE,
-      game,
-    );
-  }
-};
-
 onMounted(() => {
   getMatch();
 });
 </script>
 
 <style scoped lang="scss">
-.online-view-pick-ban-center {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1000px;
+.goat-card {
+  height: 200px;
+  line-height: 100px;
+  text-align: center;
+  .name {
+    font-size: 72px;
+  }
+  .underlabel {
+    font-size: 18px;
+  }
 }
 </style>

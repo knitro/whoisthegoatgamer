@@ -18,6 +18,10 @@
       "
       :code="props.id"
     ></online-match-gameplay-view>
+    <online-match-finish-view
+      v-else-if="matchData?.state === MatchState.FINISHED"
+      :code="props.id"
+    ></online-match-finish-view>
 
     <v-overlay :z-index="0" v-model="showAcceptanceOverlay" persistent>
       <v-card :loading="hasReady" class="online-view-overlay">
@@ -120,11 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  GameHistory,
-  Match,
-  MatchState,
-} from "@/firebase/database/database-interfaces";
+import { Match, MatchState } from "@/firebase/database/database-interfaces";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { onMounted } from "vue";
@@ -132,6 +132,7 @@ import { getOnlineMatchListener } from "@/firebase/database/database";
 import OnlineMatchLobbyView from "./OnlineMatchLobbyView.vue";
 import OnlineMatchGameView from "./OnlineMatchGameView.vue";
 import OnlineMatchGameplayView from "./OnlineMatchGameplayView.vue";
+import OnlineMatchFinishView from "./OnlineMatchFinishView.vue";
 import WaitingImage from "@/assets/images/trees.png";
 import {
   addToGameHistoryOnlineMatch,

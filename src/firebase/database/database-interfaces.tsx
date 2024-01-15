@@ -51,6 +51,7 @@ export enum MatchState {
   AWAIT_ACCEPTANCE,
   GAMEPLAY,
   AWAIT_RESULTS,
+  FINISHED,
 }
 
 export interface PlayerPoints {

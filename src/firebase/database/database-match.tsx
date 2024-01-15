@@ -89,7 +89,7 @@ export async function updateCurrentGameOnlineMatch(
   playerPoints: PlayerPoints[],
 ) {
   const currentGamePointsRef = ref(db, `series/${joinCode}/currentGame`);
-  return set(currentGamePointsRef, {
+  return update(currentGamePointsRef, {
     points: playerPoints,
   })
     .then(() => {
