@@ -11,6 +11,7 @@ export interface Match {
   gameHistory: GameHistory[];
   state: MatchState;
   currentGame: GameHistory;
+  numOfSpins: number;
 }
 
 export interface Player {
@@ -89,6 +90,7 @@ export interface MatchFirebaseObject {
   gameHistory: Object;
   state: MatchState;
   currentGame: GameHistory;
+  numOfSpins: number;
 }
 
 /**

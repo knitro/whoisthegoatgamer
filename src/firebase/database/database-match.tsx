@@ -151,3 +151,22 @@ export async function addToChatHistoryBotOnlineMatch(
       return false;
     });
 }
+
+export async function setNumOfSpinsOnlineMatch(
+  joinCode: string,
+  numOfSpins: number,
+) {
+  const dbRef = ref(db, `series/${joinCode}`);
+
+  return update(dbRef, {
+    numOfSpins: numOfSpins,
+  })
+    .then(() => {
+      // Data saved successfully!
+      return true;
+    })
+    .catch((error) => {
+      // The write failed...
+      return false;
+    });
+}

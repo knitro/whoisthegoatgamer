@@ -139,6 +139,7 @@ export async function getOnlineMatchListener(
         gameHistory: data.gameHistory ? Object.values(data.gameHistory) : [],
         state: data.state ? data.state : MatchState.LOBBY,
         currentGame: data.currentGame,
+        numOfSpins: data.numOfSpins,
       };
       updater(returnMatch);
     } else {

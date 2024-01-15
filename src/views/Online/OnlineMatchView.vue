@@ -142,6 +142,7 @@ import {
   addToChatHistoryBotOnlineMatch,
   addToGameHistoryOnlineMatch,
   removeGameListOnlineMatch,
+  setNumOfSpinsOnlineMatch,
   updateStateAndGameOnlineMatch,
   updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
@@ -269,6 +270,11 @@ async function vetoGame() {
 async function unreadyAllPlayers(matchData: Match) {
   const playerIds = matchData.playerList.map((player) => player.id);
   await setAllPlayersUnready(props.id, playerIds);
+
+  if (matchData.state == MatchState.AWAIT_ACCEPTANCE) {
+    // Reset number of spins
+    await setNumOfSpinsOnlineMatch(props.id, 0);
+  }
 }
 
 async function rejectScores() {

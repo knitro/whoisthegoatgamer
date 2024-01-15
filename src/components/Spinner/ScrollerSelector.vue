@@ -38,12 +38,21 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref } from "vue";
+import { PropType, ref, onMounted } from "vue";
 import { SpinnerItem } from "./SpinnerInterfaces";
 import { stringToColour } from "@/logic/string-to-colour";
 import ConfettiExplosion from "vue-confetti-explosion";
+import { setNumOfSpinsOnlineMatch } from "@/firebase/database/database-match";
 
 const props = defineProps({
+  code: {
+    type: String,
+    required: true,
+  },
+  addToUpdater: {
+    type: Function as PropType<(b: (a: number) => void) => void>,
+    required: true,
+  },
   items: {
     type: Array as PropType<SpinnerItem[]>,
     default: () => [], // use a factory function
@@ -52,10 +61,15 @@ const props = defineProps({
     type: Function as PropType<(game: SpinnerItem) => void>,
     required: true,
   },
+  resetActivationButton: {
+    type: Function as PropType<(a: () => void) => void>,
+    required: true,
+  },
 });
 
 enum State {
   STAND_BY,
+  PRE_ROLLING,
   ROLLING,
   FINISHED_ROLLING,
   DISPLAY_RESULT,
@@ -70,11 +84,11 @@ const MIN_LOOPS = 4; // Minimum number of loops before stopping
 const MAX_ADDED_LOOPS = 6; // Maximum number additional loops before stopping
 const CHANGE_DELAY = 1000; // The maximum time between roll changes
 
-function pickRandomItem() {
-  if (state.value == State.ROLLING) {
+async function pickRandomItem() {
+  if (state.value != State.STAND_BY) {
     return;
   }
-  state.value = State.ROLLING;
+  state.value = State.PRE_ROLLING;
 
   // Ignore if the number of selected items is less than 2 (no need for random)
   if (props.items.length < 2) {
@@ -89,6 +103,31 @@ function pickRandomItem() {
   const randomNumber = Math.floor(Math.random() * numOfItems);
 
   const numberOfChangesLeft = numOfLoops * numOfItems + randomNumber;
+  await setNumOfSpinsOnlineMatch(props.code, numberOfChangesLeft);
+  await performRoll(numberOfChangesLeft, true);
+}
+
+async function displayRoll(numberOfChangesLeft: number) {
+  // Number of Changes value has been reset in db, no need to perform roll
+  if (numberOfChangesLeft <= 0) {
+    return;
+  }
+  await performRoll(numberOfChangesLeft, false);
+}
+
+async function performRoll(numberOfChangesLeft: number, startedRoll: boolean) {
+  // startedRoll is relevant, as only the person who started the roll is able to perform any db changes.
+  if (
+    state.value == State.ROLLING ||
+    state.value == State.FINISHED_ROLLING ||
+    state.value == State.DISPLAY_RESULT
+  ) {
+    return;
+  }
+  console.log(state.value);
+  state.value = State.ROLLING;
+
+  const numOfItems = props.items.length;
 
   // Create Roll Timeout Function and Execute
   const roll = (numberOfChangesLeft: number, index: number) => {
@@ -104,13 +143,13 @@ function pickRandomItem() {
     } else {
       // Rolling has Finished
       state.value = State.FINISHED_ROLLING;
-      displaySelectedAnimation();
+      displaySelectedAnimation(startedRoll);
     }
   };
   roll(numberOfChangesLeft, 0);
 }
 
-function displaySelectedAnimation() {
+function displaySelectedAnimation(canPerformDbChanges: boolean) {
   const animationRun = () => {
     state.value = State.DISPLAY_RESULT;
     doConfetti.value = false;
@@ -118,11 +157,22 @@ function displaySelectedAnimation() {
       console.log("ERROR");
       return;
     }
-    props.setterFunction(selectedItem.value);
+    if (canPerformDbChanges) {
+      props.setterFunction(selectedItem.value);
+    }
   };
   doConfetti.value = true;
   setTimeout(animationRun, 2000);
 }
+
+function resetState() {
+  state.value = State.STAND_BY;
+}
+
+onMounted(() => {
+  props.addToUpdater(displayRoll);
+  props.resetActivationButton(resetState);
+});
 </script>
 
 <style scoped lang="scss">

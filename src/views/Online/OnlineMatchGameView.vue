@@ -8,6 +8,9 @@
             <scroller-selector
               :items="spinnerItems"
               :setterFunction="setCurrentGame"
+              :code="props.code"
+              :add-to-updater="addToUpdater"
+              :reset-activation-button="resetActivationButton"
             ></scroller-selector>
           </v-col>
           <v-row>
@@ -80,6 +83,8 @@ const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
 const leaderboard = ref<ScoreDisplay[]>([]);
 const idNameMap = ref<Map<string, string>>(new Map());
+const rollCallFunction = ref((a: number) => {});
+const resetActivationButtonFunction = ref(() => {});
 
 const router = useRouter();
 
@@ -116,6 +121,16 @@ async function getMatch() {
         return [player.id, player.name];
       }),
     );
+
+    // Check for Random Spins
+    if (a.numOfSpins > 0) {
+      rollCallFunction.value(a.numOfSpins);
+    }
+
+    // Check for State Reset
+    if (a.state == MatchState.GAME) {
+      resetActivationButtonFunction.value();
+    }
 
     // Update SpinnerItems
     const updatedSpinnerItems = a.gameList.map((gameEntry) => {
@@ -193,16 +208,24 @@ const setCurrentGame = async (item: SpinnerItem) => {
   const game = matchData.value?.gameList.find((game) => game.id === item.id);
 
   if (game) {
-    if (game.link && game.link != "") {
-      console.log("Bot Chatter");
-      await addToChatHistoryBotOnlineMatch(props.code, game.link);
-    }
     await updateStateAndGameOnlineMatch(
       props.code,
       MatchState.AWAIT_ACCEPTANCE,
       game,
     );
+    if (game.link && game.link != "") {
+      console.log("Bot Chatter");
+      await addToChatHistoryBotOnlineMatch(props.code, game.link);
+    }
   }
+};
+
+const addToUpdater = (functionToAdd: (a: number) => void) => {
+  rollCallFunction.value = functionToAdd;
+};
+
+const resetActivationButton = (functionToAdd: () => void) => {
+  resetActivationButtonFunction.value = functionToAdd;
 };
 
 onMounted(() => {
