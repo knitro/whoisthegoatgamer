@@ -124,7 +124,11 @@
 </template>
 
 <script setup lang="ts">
-import { Match, MatchState } from "@/firebase/database/database-interfaces";
+import {
+  Match,
+  MatchState,
+  Player,
+} from "@/firebase/database/database-interfaces";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { onMounted } from "vue";
@@ -135,6 +139,7 @@ import OnlineMatchGameplayView from "./OnlineMatchGameplayView.vue";
 import OnlineMatchFinishView from "./OnlineMatchFinishView.vue";
 import WaitingImage from "@/assets/images/trees.png";
 import {
+  addToChatHistoryBotOnlineMatch,
   addToGameHistoryOnlineMatch,
   removeGameListOnlineMatch,
   updateStateAndGameOnlineMatch,
@@ -165,6 +170,7 @@ const vetoCount = ref(0);
 const hasReady = ref(false);
 const numberNotReady = ref(0);
 const playerCount = ref(0);
+const idNameMap = ref<Map<string, string>>(new Map());
 
 async function getMatch() {
   const updater = (a: Match) => {
@@ -174,6 +180,13 @@ async function getMatch() {
     showResultsOverlay.value = a.state === MatchState.AWAIT_RESULTS;
     checkIfAllReady(a);
     getPlayerVetosAndFlags(a);
+
+    // Get Player ID-Name Mapping
+    idNameMap.value = new Map(
+      a.playerList.map((player: Player) => {
+        return [player.id, player.name];
+      }),
+    );
   };
 
   const accessDenied = () => {
@@ -248,6 +261,8 @@ async function vetoGame() {
     );
     await updateStateOnlineMatch(props.id, MatchState.GAME);
     await unreadyAllPlayers(matchData.value);
+    const name = idNameMap.value.get(auth.currentUser.uid);
+    await addToChatHistoryBotOnlineMatch(props.id, name + " has vetoed.");
   }
 }
 
