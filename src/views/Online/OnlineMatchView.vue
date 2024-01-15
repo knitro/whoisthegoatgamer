@@ -36,6 +36,7 @@
             prepend-icon="mdi-play"
             color="green"
             :disabled="hasReady"
+            rounded
           >
             Confirm
           </v-btn>
@@ -45,6 +46,7 @@
             prepend-icon="mdi-close-octagon"
             color="red"
             :disabled="vetoCount <= 0"
+            rounded
           >
             Veto Game ({{ vetoCount }} left)
           </v-btn>
@@ -95,14 +97,16 @@
             prepend-icon="mdi-play"
             color="green"
             :disabled="hasReady"
+            rounded
           >
             Yes, Correct Scores
           </v-btn>
           <v-btn
-            @click="vetoGame()"
+            @click="rejectScores()"
             variant="flat"
             prepend-icon="mdi-close-octagon"
             color="red"
+            rounded
           >
             No, Incorrect Scores
           </v-btn>
@@ -248,6 +252,16 @@ async function vetoGame() {
 async function unreadyAllPlayers(matchData: Match) {
   const playerIds = matchData.playerList.map((player) => player.id);
   await setAllPlayersUnready(props.id, playerIds);
+}
+
+async function rejectScores() {
+  if (
+    auth.currentUser &&
+    matchData.value &&
+    matchData.value.state === MatchState.AWAIT_RESULTS
+  ) {
+    await updateStateOnlineMatch(props.id, MatchState.GAMEPLAY);
+  }
 }
 
 onMounted(() => {

@@ -3,50 +3,79 @@
     <app-bar-goat-gamer title="Who Is the GOAT Gamer?"></app-bar-goat-gamer>
     <v-container fluid>
       <v-row>
-        <v-col>
-          <v-card title="Scoring" min-height="100%" min-width="100%">
-            <v-list>
-              <v-list-item
-                v-for="player in playerList"
-                v-bind:key="'scoring_' + player.player.id"
+        <v-col cols="6">
+          <v-col cols="12">
+            <v-card class="scroller-container">
+              <v-card
+                class="scroller-item"
+                :style="
+                  'background: ' +
+                  stringToColour(
+                    matchData ? matchData.currentGame.name : 'Random Game',
+                  ).backgroundColour
+                "
               >
-                {{ player.player.name }}
-                <template v-slot:append>
-                  <v-btn
-                    @click="updateScore(player, -1)"
-                    :disabled="!isHost"
-                    density="compact"
-                    icon="mdi-minus"
-                  ></v-btn>
-                  <div class="score-display">
-                    {{ player.score }}
-                  </div>
-                  <v-btn
-                    @click="updateScore(player, 1)"
-                    :disabled="!isHost"
-                    density="compact"
-                    icon="mdi-plus"
-                  ></v-btn>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card>
-          <v-btn @click="submitScores">Submit Scores</v-btn>
-        </v-col>
-        <v-col>
+                <span class="text">
+                  {{ matchData ? matchData.currentGame.name : "Random Game" }}
+                </span>
+              </v-card>
+            </v-card>
+          </v-col>
           <v-row>
-            <v-col>
-              <leaderboard-display
-                :scoreDisplayArray="leaderboard"
-              ></leaderboard-display>
-            </v-col>
-            <v-col>
+            <v-col cols="6">
               <chat-display
                 :code="matchData ? matchData.code : ''"
                 :chatLogs="matchData ? matchData?.chatLog : []"
               ></chat-display>
             </v-col>
+            <v-col cols="6">
+              <leaderboard-display
+                :scoreDisplayArray="leaderboard"
+              ></leaderboard-display>
+            </v-col>
           </v-row>
+        </v-col>
+
+        <v-col cols="6">
+          <v-col cols="12">
+            <v-card title="Scoring" min-height="100%" min-width="100%">
+              <v-list>
+                <v-list-item
+                  v-for="player in playerList"
+                  v-bind:key="'scoring_' + player.player.id"
+                >
+                  {{ player.player.name }}
+                  <template v-slot:append>
+                    <v-btn
+                      @click="updateScore(player, -1)"
+                      :disabled="!isHost"
+                      density="compact"
+                      icon="mdi-minus"
+                    ></v-btn>
+                    <div class="score-display">
+                      {{ player.score }}
+                    </div>
+                    <v-btn
+                      @click="updateScore(player, 1)"
+                      :disabled="!isHost"
+                      density="compact"
+                      icon="mdi-plus"
+                    ></v-btn>
+                  </template>
+                </v-list-item>
+              </v-list>
+              <v-card-actions>
+                <v-btn
+                  variant="flat"
+                  color="green"
+                  @click="submitScores"
+                  append-icon="mdi-send"
+                  rounded
+                  >Submit Scores</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-col>
         </v-col>
       </v-row>
     </v-container>
@@ -69,13 +98,13 @@ import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
 import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
-import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
 import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import {
   updateCurrentGameOnlineMatch,
   updateStateAndGameOnlineMatch,
   updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
+import { stringToColour } from "@/logic/string-to-colour";
 
 const props = defineProps({
   code: {
@@ -218,13 +247,22 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.online-view-pick-ban-center {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 1000px;
+.scroller-container {
+  border: 2px solid #333;
+  height: 200px;
+  margin-bottom: 16px;
+
+  .scroller-item {
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    span.text {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
+      font-size: 36px;
+    }
+  }
 }
 
 .score-display {
