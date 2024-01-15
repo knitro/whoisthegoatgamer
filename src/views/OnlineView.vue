@@ -28,7 +28,20 @@
 
                 <v-card-subtitle> Game Settings </v-card-subtitle>
 
-                <v-card-text> TBD </v-card-text>
+                <v-card-text>
+                  <v-select
+                    label="Preset"
+                    :items="
+                      Object.keys(PresetOption).map((key) => {
+                        return {
+                          title: PresetOption[key as keyof typeof PresetOption],
+                          value: PresetOption[key as keyof typeof PresetOption],
+                        };
+                      })
+                    "
+                    v-model="preset"
+                  ></v-select>
+                </v-card-text>
 
                 <v-card-actions>
                   <v-btn
@@ -102,7 +115,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import BackgroundImage from "@/components/Background/BackgroundImage.vue";
-
 import waitingImage from "@/assets/images/outside.png";
 import backgroundImage from "@/assets/backgrounds/range-outside.png";
 import {
@@ -125,6 +137,7 @@ import {
   VImg,
 } from "vuetify/lib/components/index.mjs";
 import { requestJoinMatch } from "@/firebase/database/database-request";
+import { PresetOption } from "@/data/presets/Preset";
 
 const router = useRouter();
 
@@ -136,6 +149,7 @@ const isCreating = ref(false);
 const isJoining = ref(false);
 const showJoinLoadingOverlay = ref(false);
 const opponentsName = ref("");
+const preset = ref(PresetOption.EMPTY);
 
 const joinCodeRules = {
   required: (value: string) => !!value || "Required.",
@@ -149,13 +163,15 @@ const joinCodeRules = {
 function createButtonPress() {
   if (!isCreating.value) {
     isCreating.value = true;
-    createOnlineMatch(playerName.value).then((joinCode: string) => {
-      isCreating.value = false;
-      router.push({
-        name: "onlineMatch",
-        params: { id: joinCode },
-      });
-    });
+    createOnlineMatch(playerName.value, preset.value).then(
+      (joinCode: string) => {
+        isCreating.value = false;
+        router.push({
+          name: "onlineMatch",
+          params: { id: joinCode },
+        });
+      },
+    );
   }
 }
 

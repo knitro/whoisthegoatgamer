@@ -29,6 +29,8 @@ export interface GameEntry {
   id: string;
   name: string;
   link: string;
+  requiresPairing: boolean;
+  options: string[];
 }
 
 export interface ChatLog {
@@ -61,7 +63,6 @@ export interface PlayerPoints {
  * This should be the same as Match, except it does not include:
  *  - code
  *  - playerRequests
- *  - gameList
  *  - chatLog
  *  - gameHistory
  *  - playerList
@@ -69,6 +70,8 @@ export interface PlayerPoints {
 export interface MatchInitialisation {
   hostId: string; // Player ID of the Match Host
   state: MatchState;
+  playerList: Object;
+  gameList: Object;
 }
 
 /**

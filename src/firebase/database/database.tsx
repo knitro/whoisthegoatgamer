@@ -20,6 +20,7 @@ import {
   PlayerFirebaseObject,
   PlayerRequest,
 } from "./database-interfaces";
+import { PresetOption, getPreset } from "@/data/presets/Preset";
 
 ////////////////////////////////////////////////////////
 // Main Functions
@@ -29,9 +30,13 @@ import {
  * Creates a Online Series on the Realtime Database
  *
  * @param playerName
+ * @param preset
  * @returns
  */
-export async function createOnlineMatch(playerName: string): Promise<string> {
+export async function createOnlineMatch(
+  playerName: string,
+  preset: PresetOption,
+): Promise<string> {
   // Ensure Join Code does not already exist
   const dbRef = ref(db);
   let joinCode: string = generateJoinCode();
@@ -52,32 +57,51 @@ export async function createOnlineMatch(playerName: string): Promise<string> {
     return "";
   }
 
+  // Create GameList Object
+  // This is done to reduce the depth of the RealTimeDatabase as arrays create indices of '0', '1' etc.
+  const gameListArray = getPreset(preset);
+  console.log(gameListArray);
+  const gameListObj: Record<string, any> = {};
+  gameListArray.forEach((gameEntry) => {
+    gameListObj[gameEntry.id] = {
+      name: gameEntry.name,
+      link: gameEntry.link,
+      requiresPairing: gameEntry.requiresPairing,
+      options: gameEntry.options,
+    };
+  });
+
+  // Create PlayerList Object
+  // This is done here since the player id is the key of the key-value pair
+  const playerListObj: Record<string, any> = {};
+  playerListObj[currentUser.uid] = {
+    name: playerName,
+    vetos: 1,
+    isReady: false,
+  };
+
   // joinCode is Unique => Create Deck in "/series"
   const info: MatchInitialisation = {
     hostId: currentUser.uid,
-    // playerList: [
-    //   {
-    //     name: playerName,
-    //     id: currentUser.uid,
-    //   },
-    // ] as Player[],
+    playerList: playerListObj,
     state: MatchState.LOBBY,
+    gameList: gameListObj,
   };
   // Create Match
   const matchRef = ref(db, `series/${joinCode}`);
   await set(matchRef, info);
 
-  // Add host
-  const playerListRef = ref(
-    db,
-    `series/${joinCode}/playerList/${currentUser.uid}`,
-  );
-  const player: PlayerFirebaseObject = {
-    name: playerName,
-    vetos: 1,
-    isReady: false,
-  };
-  await set(playerListRef, player);
+  // // Add host
+  // const playerListRef = ref(
+  //   db,
+  //   `series/${joinCode}/playerList/${currentUser.uid}`,
+  // );
+  // const player: PlayerFirebaseObject = {
+  //   name: playerName,
+  //   vetos: 1,
+  //   isReady: false,
+  // };
+  // await set(playerListRef, player);
 
   return joinCode;
 }
