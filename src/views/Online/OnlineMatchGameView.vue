@@ -214,7 +214,6 @@ const setCurrentGame = async (item: SpinnerItem) => {
       game,
     );
     if (game.link && game.link != "") {
-      console.log("Bot Chatter");
       await addToChatHistoryBotOnlineMatch(props.code, game.link);
     }
   }

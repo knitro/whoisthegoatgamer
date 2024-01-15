@@ -160,7 +160,6 @@ export async function addToArrayOnlineMatch<T>(
   item: T,
 ) {
   const dbRef = ref(db, `series/${joinCode}/${itemField}`);
-  console.log(dbRef);
   const newItemRef = push(dbRef);
   await set(newItemRef, item);
 }

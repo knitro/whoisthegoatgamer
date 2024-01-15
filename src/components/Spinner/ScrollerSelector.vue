@@ -124,7 +124,6 @@ async function performRoll(numberOfChangesLeft: number, startedRoll: boolean) {
   ) {
     return;
   }
-  console.log(state.value);
   state.value = State.ROLLING;
 
   const numOfItems = props.items.length;
