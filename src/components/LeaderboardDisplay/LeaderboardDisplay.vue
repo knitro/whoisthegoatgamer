@@ -1,5 +1,5 @@
 <template>
-  <v-card title="Leaderboard" min-height="100%" min-width="100%">
+  <v-card title="Leaderboard" class="overflow-y-auto" max-height="400px">
     <v-list>
       <v-list-item
         v-for="(scoreDisplay, index) in scoreDisplayArray"

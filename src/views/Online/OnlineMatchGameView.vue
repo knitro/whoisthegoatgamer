@@ -4,13 +4,29 @@
     <v-container fluid>
       <v-row>
         <v-col cols="6">
-          <scroller-selector
-            :items="spinnerItems"
-            :setterFunction="setCurrentGame"
-          ></scroller-selector>
+          <v-col cols="12">
+            <scroller-selector
+              :items="spinnerItems"
+              :setterFunction="setCurrentGame"
+            ></scroller-selector>
+          </v-col>
+          <v-row>
+            <v-col cols="6">
+              <chat-display
+                :code="matchData ? matchData.code : ''"
+                :chatLogs="matchData ? matchData?.chatLog : []"
+              ></chat-display>
+            </v-col>
+            <v-col cols="6">
+              <leaderboard-display
+                :scoreDisplayArray="leaderboard"
+              ></leaderboard-display>
+            </v-col>
+          </v-row>
         </v-col>
+
         <v-col cols="6">
-          <v-row align-items="center">
+          <v-col cols="12">
             <game-list
               :code="matchData ? matchData.code : ''"
               :gameList="matchData ? matchData.gameList : []"
@@ -18,20 +34,7 @@
                 matchData ? matchData.state !== MatchState.GAME : false
               "
             ></game-list>
-          </v-row>
-          <v-row>
-            <v-col cols="6">
-              <leaderboard-display
-                :scoreDisplayArray="leaderboard"
-              ></leaderboard-display>
-            </v-col>
-            <v-col cols="6">
-              <chat-display
-                :code="matchData ? matchData.code : ''"
-                :chatLogs="matchData ? matchData?.chatLog : []"
-              ></chat-display>
-            </v-col>
-          </v-row>
+          </v-col>
         </v-col>
       </v-row>
     </v-container>

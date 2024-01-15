@@ -1,23 +1,10 @@
 <template>
-  <v-card title="Chat" subtitle="TBD" min-height="100%" min-width="100%">
-    <!-- <v-list>
-      <v-list-item v-for="gameName in gameList" v-bind:key="'game_' + gameName">
-        {{ gameName.name }}
-      </v-list-item>
-    </v-list>
-    <v-card-actions>
-      <v-text-field
-        v-model="gameEntry"
-        append-icon="mdi-send"
-        variant="filled"
-        clear-icon="mdi-close-circle"
-        clearable
-        label="Add Game"
-        type="text"
-        @click:append="addGame"
-        @click:clear="clearTextField"
-      ></v-text-field>
-    </v-card-actions> -->
+  <v-card
+    title="Chat"
+    class="overflow-y-auto"
+    max-height="400px"
+    subtitle="TBD"
+  >
   </v-card>
 </template>
 
