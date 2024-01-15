@@ -48,14 +48,19 @@
           >
             Veto Game ({{ vetoCount }} left)
           </v-btn>
-          <v-chip>
+          <v-chip class="ready-chip">
             {{ playerCount - numberNotReady }} / {{ playerCount }} Ready
           </v-chip>
         </v-card-actions>
       </v-card>
     </v-overlay>
 
-    <v-overlay :z-index="0" v-model="showResultsOverlay" persistent>
+    <v-overlay
+      :z-index="0"
+      v-model="showResultsOverlay"
+      persistent
+      max-width="800"
+    >
       <v-card :loading="hasReady" class="online-view-overlay">
         <v-img :src="WaitingImage"></v-img>
         <v-card-title>Results Confirmation</v-card-title>
@@ -101,7 +106,7 @@
           >
             No, Incorrect Scores
           </v-btn>
-          <v-chip>
+          <v-chip class="ready-chip">
             {{ playerCount - numberNotReady }} / {{ playerCount }} Ready
           </v-chip>
         </v-card-actions>
@@ -251,12 +256,14 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.online-view-pick-ban-center {
-  display: block;
+.online-view-overlay {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  top: 50vh;
+  left: 50vw;
   transform: translate(-50%, -50%);
-  width: 1000px;
+
+  .ready-chip {
+    margin-left: 8px;
+  }
 }
 </style>

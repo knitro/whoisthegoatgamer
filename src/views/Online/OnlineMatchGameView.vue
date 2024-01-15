@@ -43,7 +43,6 @@
 
 <script setup lang="ts">
 import {
-  GameEntry,
   GameHistory,
   Match,
   MatchState,

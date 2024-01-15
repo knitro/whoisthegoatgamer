@@ -2,93 +2,88 @@
   <div>
     <background-image :src="backgroundImage">
       <app-bar-goat-gamer title="Home"></app-bar-goat-gamer>
-      <div class="online-view-center">
-        <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field
-                :autofocus="true"
-                v-model="playerName"
-                outlined
-                height="100"
-                class="online-view-text-input"
-                label="Player Name"
-                hint="This will be seen by your opponent to confirm that they have the right opponent."
-                counter="20"
-                :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
-                color="white"
-              >
-              </v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-card color="rgb(206, 121, 107)" dark>
-                <v-card-title class="text-h5">Create</v-card-title>
+      <v-container fluid class="online-view-center">
+        <v-row align-content="center" justify="center">
+          <v-col cols="8">
+            <v-text-field
+              :autofocus="true"
+              v-model="playerName"
+              outlined
+              height="100"
+              class="online-view-text-input"
+              label="Player Name"
+              hint="This will be seen by your opponent to confirm that they have the right opponent."
+              counter="20"
+              :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
+              color="white"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+        <v-row align-content="center" justify="center">
+          <v-col cols="4">
+            <v-card color="rgb(206, 121, 107)" dark>
+              <v-card-title class="text-h5">Create</v-card-title>
 
-                <v-card-subtitle> Game Settings </v-card-subtitle>
+              <v-card-subtitle> Game Settings </v-card-subtitle>
 
-                <v-card-text>
-                  <v-select
-                    label="Preset"
-                    :items="
-                      Object.keys(PresetOption).map((key) => {
-                        return {
-                          title: PresetOption[key as keyof typeof PresetOption],
-                          value: PresetOption[key as keyof typeof PresetOption],
-                        };
-                      })
-                    "
-                    v-model="preset"
-                  ></v-select>
-                </v-card-text>
+              <v-card-text>
+                <v-select
+                  label="Preset"
+                  :items="
+                    Object.keys(PresetOption).map((key) => {
+                      return {
+                        title: PresetOption[key as keyof typeof PresetOption],
+                        value: PresetOption[key as keyof typeof PresetOption],
+                      };
+                    })
+                  "
+                  v-model="preset"
+                ></v-select>
+              </v-card-text>
 
-                <v-card-actions>
-                  <v-btn
-                    variant="text"
-                    @click="createButtonPress"
-                    :loading="isCreating"
-                  >
-                    Create Game
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-            <v-col>
-              <v-card color="rgb(206, 121, 107)" dark>
-                <v-card-title class="text-h5">Join</v-card-title>
-                <v-card-subtitle>
-                  Enter the code that the opponent has sent you
-                </v-card-subtitle>
-                <v-card-text>
-                  <v-text-field
-                    v-model="joinCode"
-                    outlined
-                    label="Join Code"
-                    @input="joinCodeInput"
-                    maxlength="5"
-                    :rules="[
-                      joinCodeRules.required,
-                      joinCodeRules.validJoinCode,
-                    ]"
-                  >
-                  </v-text-field
-                ></v-card-text>
-                <v-card-actions>
-                  <v-btn
-                    variant="text"
-                    @disabled="joinCodeValid"
-                    @click="joinButtonPress"
-                    :loading="isJoining"
-                  >
-                    Join Game
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
+              <v-card-actions>
+                <v-btn
+                  variant="text"
+                  @click="createButtonPress"
+                  :loading="isCreating"
+                >
+                  Create Game
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card color="rgb(206, 121, 107)" dark>
+              <v-card-title class="text-h5">Join</v-card-title>
+              <v-card-subtitle>
+                Enter the code that the opponent has sent you
+              </v-card-subtitle>
+              <v-card-text>
+                <v-text-field
+                  v-model="joinCode"
+                  outlined
+                  label="Join Code"
+                  @input="joinCodeInput"
+                  maxlength="5"
+                  :rules="[joinCodeRules.required, joinCodeRules.validJoinCode]"
+                >
+                </v-text-field
+              ></v-card-text>
+              <v-card-actions>
+                <v-btn
+                  variant="text"
+                  @disabled="joinCodeValid"
+                  @click="joinButtonPress"
+                  :loading="isJoining"
+                >
+                  Join Game
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
       <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
         <v-card loading class="online-view-overlay">
           <v-img :src="waitingImage"></v-img>
@@ -279,17 +274,18 @@ function checkIfRequestStillExists(
 
 <style scoped lang="scss">
 .online-view-center {
-  display: block;
   position: absolute;
-  left: 50%;
-  top: 50%;
+  top: 50vh;
+  left: 50vw;
   transform: translate(-50%, -50%);
-  width: 1000px;
 }
 
 .online-view-overlay {
-  display: block;
-  transform: translate(50%, 50%);
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  width: 600px;
 }
 
 .online-view-text-input {
