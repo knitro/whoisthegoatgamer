@@ -12,6 +12,8 @@ export interface Match {
   state: MatchState;
   currentGame: GameHistory;
   numOfSpins: number;
+  pointsToWin: number;
+  maxNumberOfVetos: number;
 }
 
 export interface Player {
@@ -68,12 +70,15 @@ export interface PlayerPoints {
  *  - chatLog
  *  - gameHistory
  *  - playerList
+ *  - numOfSpins;
  */
 export interface MatchInitialisation {
   hostId: string; // Player ID of the Match Host
   state: MatchState;
   playerList: Object;
   gameList: Object;
+  pointsToWin: number;
+  maxNumberOfVetos: number;
 }
 
 /**
@@ -91,6 +96,8 @@ export interface MatchFirebaseObject {
   state: MatchState;
   currentGame: GameHistory;
   numOfSpins: number;
+  pointsToWin: number;
+  maxNumberOfVetos: number;
 }
 
 /**

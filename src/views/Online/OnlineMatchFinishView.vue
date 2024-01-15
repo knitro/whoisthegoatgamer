@@ -20,6 +20,7 @@
           <v-col cols="12">
             <leaderboard-display
               :scoreDisplayArray="leaderboard"
+              :pointsToWin="matchData?.pointsToWin ?? 0"
             ></leaderboard-display>
           </v-col>
         </v-col>

@@ -1,7 +1,7 @@
 <template>
   <v-card
     title="Leaderboard"
-    subtitle="First to 10"
+    :subtitle="'First to ' + pointsToWin"
     class="overflow-y-auto"
     max-height="400px"
   >
@@ -35,6 +35,10 @@ import { ScoreDisplay } from "./LeaderboardInterfaces";
 const props = defineProps({
   scoreDisplayArray: {
     type: Array as PropType<ScoreDisplay[]>,
+    required: true,
+  },
+  pointsToWin: {
+    type: Number,
     required: true,
   },
 });

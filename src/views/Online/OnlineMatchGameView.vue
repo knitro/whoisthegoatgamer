@@ -24,6 +24,7 @@
             <v-col cols="5">
               <leaderboard-display
                 :scoreDisplayArray="leaderboard"
+                :pointsToWin="matchData?.pointsToWin ?? 0"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -198,7 +199,10 @@ async function calculateScore(matchData: Match) {
     }
   });
 
-  if (leaderboard.value.length > 0 && leaderboard.value[0].score >= 10) {
+  if (
+    leaderboard.value.length > 0 &&
+    leaderboard.value[0].score >= matchData.pointsToWin
+  ) {
     await updateStateOnlineMatch(props.code, MatchState.FINISHED);
   }
 }

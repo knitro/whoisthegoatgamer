@@ -3,9 +3,7 @@ import {
   get,
   onValue,
   ref,
-  serverTimestamp,
   set,
-  update,
   Unsubscribe,
   remove,
   push,
@@ -16,9 +14,6 @@ import {
   MatchFirebaseObject,
   MatchInitialisation,
   MatchState,
-  Player,
-  PlayerFirebaseObject,
-  PlayerRequest,
 } from "./database-interfaces";
 import { PresetOption, getPreset } from "@/data/presets/Preset";
 
@@ -36,6 +31,8 @@ import { PresetOption, getPreset } from "@/data/presets/Preset";
 export async function createOnlineMatch(
   playerName: string,
   preset: PresetOption,
+  pointsToWin: number,
+  numberOfVetos: number,
 ): Promise<string> {
   // Ensure Join Code does not already exist
   const dbRef = ref(db);
@@ -85,22 +82,13 @@ export async function createOnlineMatch(
     playerList: playerListObj,
     state: MatchState.LOBBY,
     gameList: gameListObj,
+    pointsToWin: pointsToWin,
+    maxNumberOfVetos: numberOfVetos,
   };
+
   // Create Match
   const matchRef = ref(db, `series/${joinCode}`);
   await set(matchRef, info);
-
-  // // Add host
-  // const playerListRef = ref(
-  //   db,
-  //   `series/${joinCode}/playerList/${currentUser.uid}`,
-  // );
-  // const player: PlayerFirebaseObject = {
-  //   name: playerName,
-  //   vetos: 1,
-  //   isReady: false,
-  // };
-  // await set(playerListRef, player);
 
   return joinCode;
 }
@@ -140,6 +128,8 @@ export async function getOnlineMatchListener(
         state: data.state ? data.state : MatchState.LOBBY,
         currentGame: data.currentGame,
         numOfSpins: data.numOfSpins,
+        pointsToWin: data.pointsToWin,
+        maxNumberOfVetos: data.maxNumberOfVetos,
       };
       updater(returnMatch);
     } else {

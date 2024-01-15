@@ -40,6 +40,16 @@
                   "
                   v-model="preset"
                 ></v-select>
+                <v-text-field
+                  v-model.number="pointsToWin"
+                  :rules="[joinCodeRules.required, joinCodeRules.numbersOnly]"
+                  label="Points Required to Finish"
+                ></v-text-field>
+                <v-text-field
+                  v-model.number="numberOfVetos"
+                  :rules="[joinCodeRules.required, joinCodeRules.numbersOnly]"
+                  label="Number of Vetos per Player"
+                ></v-text-field>
               </v-card-text>
 
               <v-card-actions>
@@ -144,7 +154,11 @@ const isCreating = ref(false);
 const isJoining = ref(false);
 const showJoinLoadingOverlay = ref(false);
 const opponentsName = ref("");
+
+// Game Settings
 const preset = ref(PresetOption.EMPTY);
+const pointsToWin = ref(10);
+const numberOfVetos = ref(1);
 
 const joinCodeRules = {
   required: (value: string) => !!value || "Required.",
@@ -153,22 +167,29 @@ const joinCodeRules = {
     return pattern.test(value) || "Invalid Join Code";
   },
   teamNameCount: (value: string) => value.length <= 20 || "Max 20 characters",
+  numbersOnly: (value: string) => !Number.isNaN(Number.parseFloat(value)),
 };
 
 function createButtonPress() {
   if (!isCreating.value) {
     isCreating.value = true;
     const cleanedPlayerName = playerName.value.trim();
-    if (cleanedPlayerName.length > 0)
-      createOnlineMatch(playerName.value, preset.value).then(
-        (joinCode: string) => {
-          isCreating.value = false;
-          router.push({
-            name: "onlineMatch",
-            params: { id: joinCode },
-          });
-        },
-      );
+    if (cleanedPlayerName.length > 0) {
+      createOnlineMatch(
+        playerName.value,
+        preset.value,
+        pointsToWin.value,
+        numberOfVetos.value,
+      ).then((joinCode: string) => {
+        isCreating.value = false;
+        router.push({
+          name: "onlineMatch",
+          params: { id: joinCode },
+        });
+      });
+    } else {
+      isCreating.value = false;
+    }
   }
 }
 
