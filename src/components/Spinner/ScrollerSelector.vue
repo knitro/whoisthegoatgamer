@@ -30,8 +30,7 @@
       class="spinner-selector-random-button"
       :min-height="70"
       :max-height="70"
-      v-show="state == 0"
-      :disabled="items.length <= 1"
+      :disabled="items.length <= 1 || state != State.STAND_BY"
     >
       Roll a Random Game
     </v-btn>
