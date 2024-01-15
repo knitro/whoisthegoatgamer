@@ -78,7 +78,7 @@ function profileButtonPress() {
   if (auth.currentUser == null) {
     router.push("/login");
   } else {
-    router.push("/profile");
+    // router.push("/profile");
   }
 }
 </script>
