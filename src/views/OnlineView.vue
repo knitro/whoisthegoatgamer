@@ -158,22 +158,29 @@ const joinCodeRules = {
 function createButtonPress() {
   if (!isCreating.value) {
     isCreating.value = true;
-    createOnlineMatch(playerName.value, preset.value).then(
-      (joinCode: string) => {
-        isCreating.value = false;
-        router.push({
-          name: "onlineMatch",
-          params: { id: joinCode },
-        });
-      },
-    );
+    const cleanedPlayerName = playerName.value.trim();
+    if (cleanedPlayerName.length > 0)
+      createOnlineMatch(playerName.value, preset.value).then(
+        (joinCode: string) => {
+          isCreating.value = false;
+          router.push({
+            name: "onlineMatch",
+            params: { id: joinCode },
+          });
+        },
+      );
   }
 }
 
 function joinButtonPress() {
   isJoining.value = true;
-  if (joinCodeValid.value && playerName.value.length <= 20) {
-    requestJoinMatch(joinCode.value, playerName.value).then(
+  const cleanedPlayerName = playerName.value.trim();
+  if (
+    joinCodeValid.value &&
+    cleanedPlayerName.length <= 20 &&
+    cleanedPlayerName.length > 0
+  ) {
+    requestJoinMatch(joinCode.value, cleanedPlayerName).then(
       async (isRequestSuccess: boolean) => {
         if (!isRequestSuccess) {
           // Don't bother going further if request was not added
@@ -217,7 +224,7 @@ function joinButtonPress() {
 
           // Check if Player is Removed from PlayerRequests
           const userRequest: PlayerRequest = {
-            name: playerName.value,
+            name: cleanedPlayerName,
             id: currentUserId,
           };
           if (
