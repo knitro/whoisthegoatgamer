@@ -27,32 +27,48 @@
 
               <v-card-subtitle> Game Settings </v-card-subtitle>
 
-              <v-card-text>
-                <v-select
-                  v-model="preset"
-                  label="Presets"
-                  :items="
-                    Object.keys(PresetOption).map((key) => {
-                      return {
-                        title: PresetOption[key as keyof typeof PresetOption],
-                        value: PresetOption[key as keyof typeof PresetOption],
-                      };
-                    })
-                  "
-                  chips
-                  multiple
-                ></v-select>
-                <v-text-field
-                  v-model.number="pointsToWin"
-                  :rules="[joinCodeRules.required, joinCodeRules.numbersOnly]"
-                  label="Points Required to Finish"
-                ></v-text-field>
-                <v-text-field
-                  v-model.number="numberOfVetos"
-                  :rules="[joinCodeRules.required, joinCodeRules.numbersOnly]"
-                  label="Number of Vetos per Player"
-                ></v-text-field>
-              </v-card-text>
+              <v-container fluid>
+                <v-row>
+                  <v-col cols="12">
+                    <v-select
+                      v-model="preset"
+                      label="Presets"
+                      :items="
+                        Object.keys(PresetOption).map((key) => {
+                          return {
+                            title:
+                              PresetOption[key as keyof typeof PresetOption],
+                            value:
+                              PresetOption[key as keyof typeof PresetOption],
+                          };
+                        })
+                      "
+                      chips
+                      multiple
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model.number="pointsToWin"
+                      :rules="[
+                        joinCodeRules.required,
+                        joinCodeRules.numbersOnly,
+                      ]"
+                      label="Points Required to Finish"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model.number="numberOfVetos"
+                      :rules="[
+                        joinCodeRules.required,
+                        joinCodeRules.numbersOnly,
+                      ]"
+                      label="Number of Vetos per Player"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
 
               <v-card-actions>
                 <v-btn
