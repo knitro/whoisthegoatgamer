@@ -89,6 +89,7 @@
                   @click="submitScores"
                   append-icon="mdi-send"
                   rounded
+                  :disabled="!isHost"
                   >Submit Scores</v-btn
                 >
               </v-card-actions>
