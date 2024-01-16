@@ -141,7 +141,7 @@ async function pressGenerateRound() {
     // Ignore any requests that don't have enough players going into the next round
     return;
   }
-
+  advancingPlayers.value = [];
   const round = generateBracket(playersForNextRound, bracketSize.value);
 
   await addBracketOnlineMatch(
