@@ -32,8 +32,12 @@ export interface GameEntry {
   id: string;
   name: string;
   link: string;
+  options: GameOption[];
+}
+
+export interface GameOption {
+  name: string;
   requiresPairing: boolean;
-  options: string[];
 }
 
 export interface ChatLog {

@@ -29,7 +29,8 @@
 
               <v-card-text>
                 <v-select
-                  label="Preset"
+                  v-model="preset"
+                  label="Presets"
                   :items="
                     Object.keys(PresetOption).map((key) => {
                       return {
@@ -38,7 +39,8 @@
                       };
                     })
                   "
-                  v-model="preset"
+                  chips
+                  multiple
                 ></v-select>
                 <v-text-field
                   v-model.number="pointsToWin"
@@ -156,7 +158,7 @@ const showJoinLoadingOverlay = ref(false);
 const opponentsName = ref("");
 
 // Game Settings
-const preset = ref(PresetOption.EMPTY);
+const preset = ref<PresetOption[]>([]);
 const pointsToWin = ref(10);
 const numberOfVetos = ref(1);
 

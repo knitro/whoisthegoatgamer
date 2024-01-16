@@ -30,7 +30,7 @@ import { PresetOption, getPreset } from "@/data/presets/Preset";
  */
 export async function createOnlineMatch(
   playerName: string,
-  preset: PresetOption,
+  preset: PresetOption[],
   pointsToWin: number,
   numberOfVetos: number,
 ): Promise<string> {
@@ -62,7 +62,6 @@ export async function createOnlineMatch(
     gameListObj[gameEntry.id] = {
       name: gameEntry.name,
       link: gameEntry.link,
-      requiresPairing: gameEntry.requiresPairing,
       options: gameEntry.options,
     };
   });
