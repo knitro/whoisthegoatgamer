@@ -1,29 +1,41 @@
 <template>
   <v-card title="Chat" class="overflow-y-auto">
-    <v-list max-height="400px">
+    <v-list max-height="400px" lines="three">
       <v-list-item
         v-for="chatLog in chatLogs"
         v-bind:key="'chat_' + chatLog.id"
         :prependAvatar="'https://robohash.org/' + chatLog.authorId + '.png'"
-        :title="playerIdNameMapping.get(chatLog.authorId) ?? 'Match Bot'"
       >
+        <v-list-item-title>
+          <div v-if="playerIdNameMapping.get(chatLog.authorId)">
+            {{ playerIdNameMapping.get(chatLog.authorId) }}
+          </div>
+          <v-chip v-else>Match Bot</v-chip>
+        </v-list-item-title>
         <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
+          <v-avatar
+            :color="
+              chatLog.authorId == 'match-bot'
+                ? 'pink-lighten-2'
+                : 'grey-lighten-1'
+            "
+          >
             <v-img :src="'https://robohash.org/' + chatLog.authorId + '.png'" />
           </v-avatar>
         </template>
-        <v-list-item-subtitle>
-          <a
-            v-if="chatLog.authorId == 'match-bot'"
-            :href="chatLog.message"
-            target="_blank"
-          >
-            {{ chatLog.message }}
-          </a>
-          <div v-else>
-            {{ chatLog.message }}
-          </div>
-        </v-list-item-subtitle>
+        <a
+          v-if="
+            chatLog.authorId == 'match-bot' &&
+            chatLog.message.startsWith('https://')
+          "
+          :href="chatLog.message"
+          target="_blank"
+        >
+          {{ chatLog.message }}
+        </a>
+        <div v-else>
+          {{ chatLog.message }}
+        </div>
         <v-divider></v-divider>
       </v-list-item>
       <v-list-item

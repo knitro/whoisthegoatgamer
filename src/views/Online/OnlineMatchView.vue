@@ -255,6 +255,11 @@ async function vetoGame() {
     matchData.value.state === MatchState.AWAIT_ACCEPTANCE
   ) {
     const updatedVetoCount = vetoCount.value - 1;
+    const name = idNameMap.value.get(auth.currentUser.uid);
+    await addToChatHistoryBotOnlineMatch(
+      props.id,
+      name + " has vetoed " + matchData.value.currentGame.name + "!",
+    );
     await playerVetoOnlineMatch(
       props.id,
       auth.currentUser.uid,
@@ -262,19 +267,13 @@ async function vetoGame() {
     );
     await updateStateOnlineMatch(props.id, MatchState.GAME);
     await unreadyAllPlayers(matchData.value);
-    const name = idNameMap.value.get(auth.currentUser.uid);
-    await addToChatHistoryBotOnlineMatch(props.id, name + " has vetoed.");
   }
 }
 
 async function unreadyAllPlayers(matchData: Match) {
   const playerIds = matchData.playerList.map((player) => player.id);
   await setAllPlayersUnready(props.id, playerIds);
-
-  if (matchData.state == MatchState.AWAIT_ACCEPTANCE) {
-    // Reset number of spins
-    await setNumOfSpinsOnlineMatch(props.id, 0);
-  }
+  await setNumOfSpinsOnlineMatch(props.id, 0);
 }
 
 async function rejectScores() {

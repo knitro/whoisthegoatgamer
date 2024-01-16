@@ -95,6 +95,7 @@ async function onUpdate() {
 
 onMounted(async () => {
   props.addToUpdater(onUpdate);
+  await onUpdate();
 });
 </script>
 

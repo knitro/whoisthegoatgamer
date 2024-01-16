@@ -170,9 +170,10 @@ const setCurrentGame = async (item: SpinnerItem) => {
       MatchState.AWAIT_ACCEPTANCE,
       game,
     );
-    if (game.link && game.link != "") {
-      await addToChatHistoryBotOnlineMatch(props.code, game.link);
-    }
+    await addToChatHistoryBotOnlineMatch(
+      props.code,
+      game.name + " has been selected",
+    );
   }
 };
 
