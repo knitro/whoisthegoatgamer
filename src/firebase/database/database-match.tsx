@@ -10,7 +10,10 @@ import {
   PlayerPoints,
 } from "./database-interfaces";
 import { addToArrayOnlineMatch, removeItemOnlineMatch } from "./database";
-import { BracketPlayer } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
+import {
+  BracketPairing,
+  BracketPlayer,
+} from "@/components/BracketGenerator/BracketGeneratorInterfaces";
 
 ////////////////////////////////////////////////////////
 // Main Functions
@@ -172,15 +175,15 @@ export async function setNumOfSpinsOnlineMatch(
     });
 }
 
-export async function generateBracket(
+export async function addBracketOnlineMatch(
   joinCode: string,
-  playerList: BracketPlayer[],
+  bracketPairingArray: BracketPairing[],
+  nameOfRound: string,
 ) {
-  // Sort playerList by players with BYE first
-  playerList.sort((a: BracketPlayer, b: BracketPlayer) => {
-    if (a.hadBye == b.hadBye) {
-      // Randomise if both players had bye or not had bye
-      return Math.random() > 0.5 ? 1 : -1
-    } else 
-  });
+  const bracketMatchEntry = {
+    // Note this is an BracketMatch w/o the id
+    name: nameOfRound, //eg. Ro8
+    pairings: bracketPairingArray,
+  };
+  return await addToArrayOnlineMatch(joinCode, "brackets", bracketMatchEntry);
 }

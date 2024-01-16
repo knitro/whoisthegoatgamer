@@ -129,6 +129,9 @@ export async function getOnlineMatchListener(
         numOfSpins: data.numOfSpins,
         pointsToWin: data.pointsToWin,
         maxNumberOfVetos: data.maxNumberOfVetos,
+        brackets: data.brackets
+          ? createArrayWithIdFromObject(data.brackets)
+          : [],
       };
       updater(returnMatch);
     } else {

@@ -1,3 +1,5 @@
+import { BracketMatch } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
+
 /**
  * Data Structure of a Match in the Database
  */
@@ -14,6 +16,7 @@ export interface Match {
   numOfSpins: number;
   pointsToWin: number;
   maxNumberOfVetos: number;
+  brackets: BracketMatch[];
 }
 
 export interface Player {
@@ -102,6 +105,7 @@ export interface MatchFirebaseObject {
   numOfSpins: number;
   pointsToWin: number;
   maxNumberOfVetos: number;
+  brackets: Object; // Currently Array to Keep Order
 }
 
 /**

@@ -50,7 +50,6 @@
 
 <script setup lang="ts">
 import {
-  GameHistory,
   Match,
   MatchState,
   Player,

@@ -94,6 +94,14 @@
               </v-card-actions>
             </v-card>
           </v-col>
+          <v-col cols="12">
+            <bracket-generator
+              :bracket-array="matchData?.brackets ?? []"
+              :match-id="props.code"
+              :is-host="isHost"
+              :player-list="matchData?.playerList ?? []"
+            ></bracket-generator>
+          </v-col>
         </v-col>
       </v-row>
     </v-container>
@@ -121,6 +129,7 @@ import {
   updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
 import { stringToColour } from "@/logic/string-to-colour";
+import BracketGenerator from "@/components/BracketGenerator/BracketGenerator.vue";
 
 const props = defineProps({
   code: {
