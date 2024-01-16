@@ -30,7 +30,7 @@
       class="spinner-selector-random-button"
       :min-height="70"
       :max-height="70"
-      :disabled="items.length <= 1 || state != State.STAND_BY"
+      :disabled="items.length <= 1 || state != State.STAND_BY || !isHost"
     >
       Roll a Random Game
     </v-btn>
@@ -63,6 +63,10 @@ const props = defineProps({
   },
   resetActivationButton: {
     type: Function as PropType<(a: () => void) => void>,
+    required: true,
+  },
+  isHost: {
+    type: Boolean,
     required: true,
   },
 });

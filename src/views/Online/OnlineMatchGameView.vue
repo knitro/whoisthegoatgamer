@@ -11,6 +11,7 @@
               :code="props.code"
               :add-to-updater="addToRollUpdater"
               :reset-activation-button="resetActivationButton"
+              :is-host="isHost"
             ></scroller-selector>
           </v-col>
           <v-row>
