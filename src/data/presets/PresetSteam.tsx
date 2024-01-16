@@ -47,4 +47,13 @@ export const PRESET_STEAM_GAMES: GameEntry[] = [
     link: "steam://launch/437920/Dialog",
     options: [{ name: "VS", requiresPairing: false }],
   },
+  {
+    id: "brawlhalla",
+    name: "Brawlhalla",
+    link: "steam://launch/291550/Dialog",
+    options: [
+      { name: "1v1", requiresPairing: true },
+      { name: "FFA", requiresPairing: false },
+    ],
+  },
 ];
