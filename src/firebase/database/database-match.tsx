@@ -6,6 +6,7 @@ import {
   CurrentGame,
   GameEntry,
   GameHistory,
+  GameOption,
   Match,
   MatchState,
   PlayerPoints,
@@ -48,7 +49,12 @@ export function updateStateAndGameOnlineMatch(
   let gameToSave: CurrentGame | null = null;
   if (game != null) {
     // Pick random option
-    const randomIndex = Math.floor(Math.random() * game.options.length);
+
+    let option: GameOption = { name: "", requiresPairing: false };
+    if (game.options && game.options.length > 0) {
+      const randomIndex = Math.floor(Math.random() * game.options.length);
+      option = game.options[randomIndex];
+    }
 
     gameToSave = {
       history: {
@@ -57,7 +63,7 @@ export function updateStateAndGameOnlineMatch(
         points: [],
       },
       link: game.link,
-      option: game.options[randomIndex],
+      option: option,
     };
   }
 
