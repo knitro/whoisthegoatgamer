@@ -7,7 +7,7 @@
   >
     <v-list>
       <v-list-item
-        v-for="(scoreDisplay, index) in scoreDisplayArray"
+        v-for="(scoreDisplay, index) in leaderboard"
         v-bind:key="'score_' + scoreDisplay.playerId"
       >
         <template v-slot:prepend>
@@ -29,19 +29,30 @@
 
 <script setup lang="ts">
 import { VCard, VList, VListItem } from "vuetify/lib/components/index.mjs";
-import { PropType } from "vue";
-import { ScoreDisplay } from "./LeaderboardInterfaces";
+import { PropType, onMounted, ref } from "vue";
+import { GameHistory, Player } from "@/firebase/database/database-interfaces";
+import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
-  scoreDisplayArray: {
-    type: Array as PropType<ScoreDisplay[]>,
+  playerList: {
+    type: Array as PropType<Player[]>,
+    required: true,
+  },
+  gameHistory: {
+    type: Array as PropType<GameHistory[]>,
     required: true,
   },
   pointsToWin: {
     type: Number,
     required: true,
   },
+  matchId: {
+    type: String,
+    required: true,
+  },
 });
+
+const leaderboard = ref<LeaderboardScore[]>([]);
 
 function getIcon(index: number) {
   switch (index) {
@@ -68,6 +79,15 @@ function getColour(index: number) {
       return "#000000";
   }
 }
+
+onMounted(async () => {
+  leaderboard.value = await calculateScore(
+    props.playerList,
+    props.gameHistory,
+    props.pointsToWin,
+    props.matchId,
+  );
+});
 </script>
 
 <style scoped lang="scss">

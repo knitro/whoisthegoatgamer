@@ -10,6 +10,7 @@ import {
   PlayerPoints,
 } from "./database-interfaces";
 import { addToArrayOnlineMatch, removeItemOnlineMatch } from "./database";
+import { BracketPlayer } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
 
 ////////////////////////////////////////////////////////
 // Main Functions
@@ -169,4 +170,17 @@ export async function setNumOfSpinsOnlineMatch(
       // The write failed...
       return false;
     });
+}
+
+export async function generateBracket(
+  joinCode: string,
+  playerList: BracketPlayer[],
+) {
+  // Sort playerList by players with BYE first
+  playerList.sort((a: BracketPlayer, b: BracketPlayer) => {
+    if (a.hadBye == b.hadBye) {
+      // Randomise if both players had bye or not had bye
+      return Math.random() > 0.5 ? 1 : -1
+    } else 
+  });
 }

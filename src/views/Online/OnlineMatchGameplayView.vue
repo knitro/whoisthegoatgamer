@@ -31,8 +31,10 @@
             </v-col>
             <v-col cols="5">
               <leaderboard-display
-                :scoreDisplayArray="leaderboard"
+                :player-list="matchData?.playerList ?? []"
+                :game-history="matchData?.gameHistory ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
+                :match-id="props.code"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -114,7 +116,6 @@ import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
 import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
-import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import {
   updateCurrentGameOnlineMatch,
   updateStateOnlineMatch,
@@ -136,7 +137,6 @@ interface PlayerAndScore {
 const isHost = ref(false);
 const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
-const leaderboard = ref<ScoreDisplay[]>([]);
 const router = useRouter();
 const idNameMap = ref<Map<string, string>>(new Map());
 
@@ -178,9 +178,6 @@ async function getMatch() {
 
     // Set Player Scores
     setPlayerAndScores(a.playerList);
-
-    // Update ScoreDisplay
-    calculateScore(a);
   };
 
   const accessDenied = () => {
@@ -192,41 +189,6 @@ async function getMatch() {
     updater,
     accessDenied,
   );
-}
-
-function calculateScore(matchData: Match) {
-  // Create Initial Players
-  const map = new Map(
-    matchData.playerList.map((player: Player) => {
-      return [player.id, { name: player.name, score: 0 }];
-    }),
-  );
-
-  matchData.gameHistory.forEach((history: GameHistory) => {
-    history.points.forEach((pointHistory) => {
-      const storedValue = map.get(pointHistory.playerId);
-      if (storedValue) {
-        storedValue.score += pointHistory.points;
-      }
-    });
-  });
-
-  // Convert to Array
-  const calculatedLeaderboard = [...map].map(([id, value]) => ({
-    playerName: value.name,
-    playerId: id,
-    score: value.score,
-  }));
-
-  leaderboard.value = calculatedLeaderboard.sort((o1, o2) => {
-    if (o1.score > o2.score) {
-      return -1;
-    } else if (o1.score < o2.score) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
 }
 
 function setPlayerAndScores(matchPlayers: Player[]) {

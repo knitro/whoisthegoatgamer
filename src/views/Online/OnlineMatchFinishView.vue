@@ -5,22 +5,19 @@
       <v-row>
         <v-col cols="6">
           <v-col cols="12">
-            <v-card class="goat-card">
-              <span class="name">
-                <v-icon icon="mdi-trophy"></v-icon>
-                {{
-                  leaderboard.length > 0 ? leaderboard[0].playerName : "ERROR"
-                }}
-                <v-icon icon="mdi-trophy"></v-icon>
-              </span>
-              <br />
-              <span class="underlabel">is the GOAT Gamer</span>
-            </v-card>
+            <goat-display
+              :player-list="matchData?.playerList ?? []"
+              :game-history="matchData?.gameHistory ?? []"
+              :pointsToWin="matchData?.pointsToWin ?? 0"
+              :match-id="props.code"
+            ></goat-display>
           </v-col>
           <v-col cols="12">
             <leaderboard-display
-              :scoreDisplayArray="leaderboard"
+              :player-list="matchData?.playerList ?? []"
+              :game-history="matchData?.gameHistory ?? []"
               :pointsToWin="matchData?.pointsToWin ?? 0"
+              :match-id="props.code"
             ></leaderboard-display>
           </v-col>
         </v-col>
@@ -62,22 +59,16 @@
 </template>
 
 <script setup lang="ts">
-import {
-  GameHistory,
-  Match,
-  MatchState,
-  Player,
-} from "@/firebase/database/database-interfaces";
+import { Match, Player } from "@/firebase/database/database-interfaces";
 import { onMounted, ref } from "vue";
 import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
-import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
-import { updateStateOnlineMatch } from "@/firebase/database/database-match";
 import ConfettiExplosion from "vue-confetti-explosion";
 import { VCard, VList, VListItem } from "vuetify/lib/components/index.mjs";
+import GoatDisplay from "@/components/LeaderboardDisplay/GoatDisplay.vue";
 
 const props = defineProps({
   code: {
@@ -89,7 +80,6 @@ const props = defineProps({
 const isHost = ref(false);
 const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
-const leaderboard = ref<ScoreDisplay[]>([]);
 const idNameMap = ref<Map<string, string>>(new Map());
 
 const router = useRouter();
@@ -127,9 +117,6 @@ async function getMatch() {
         return [player.id, player.name];
       }),
     );
-
-    // Update ScoreDisplay
-    await calculateScore(a);
   };
 
   const accessDenied = () => {
@@ -143,60 +130,9 @@ async function getMatch() {
   );
 }
 
-async function calculateScore(matchData: Match) {
-  // Create Initial Players
-  const map = new Map(
-    matchData.playerList.map((player: Player) => {
-      return [player.id, { name: player.name, score: 0 }];
-    }),
-  );
-
-  matchData.gameHistory.forEach((history: GameHistory) => {
-    history.points.forEach((pointHistory) => {
-      const storedValue = map.get(pointHistory.playerId);
-      if (storedValue) {
-        storedValue.score += pointHistory.points;
-      }
-    });
-  });
-
-  // Convert to Array
-  const calculatedLeaderboard = [...map].map(([id, value]) => ({
-    playerName: value.name,
-    playerId: id,
-    score: value.score,
-  }));
-
-  leaderboard.value = calculatedLeaderboard.sort((o1, o2) => {
-    if (o1.score > o2.score) {
-      return -1;
-    } else if (o1.score < o2.score) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-  if (leaderboard.value.length > 0 && leaderboard.value[0].score >= 10) {
-    await updateStateOnlineMatch(props.code, MatchState.FINISHED);
-  }
-}
-
 onMounted(() => {
   getMatch();
 });
 </script>
 
-<style scoped lang="scss">
-.goat-card {
-  height: 200px;
-  line-height: 100px;
-  text-align: center;
-  .name {
-    font-size: 72px;
-  }
-  .underlabel {
-    font-size: 18px;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

@@ -23,8 +23,10 @@
             </v-col>
             <v-col cols="5">
               <leaderboard-display
-                :scoreDisplayArray="leaderboard"
+                :player-list="matchData?.playerList ?? []"
+                :game-history="matchData?.gameHistory ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
+                :match-id="props.code"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -64,11 +66,9 @@ import ScrollerSelector from "@/components/Spinner/ScrollerSelector.vue";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
 import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
 import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
-import { ScoreDisplay } from "@/components/LeaderboardDisplay/LeaderboardInterfaces";
 import {
   addToChatHistoryBotOnlineMatch,
   updateStateAndGameOnlineMatch,
-  updateStateOnlineMatch,
 } from "@/firebase/database/database-match";
 
 const props = defineProps({
@@ -82,7 +82,6 @@ const isHost = ref(false);
 const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
-const leaderboard = ref<ScoreDisplay[]>([]);
 const idNameMap = ref<Map<string, string>>(new Map());
 const rollCallFunction = ref((a: number) => {});
 const resetActivationButtonFunction = ref(() => {});
@@ -142,9 +141,6 @@ async function getMatch() {
       };
     });
     spinnerItems.value = updatedSpinnerItems;
-
-    // Update ScoreDisplay
-    await calculateScore(a);
   };
 
   const accessDenied = () => {
@@ -156,55 +152,6 @@ async function getMatch() {
     updater,
     accessDenied,
   );
-}
-
-async function calculateScore(matchData: Match) {
-  if (matchData == null || matchData.playerList == null) {
-    return;
-  }
-
-  // Create Initial Players
-  const map = new Map(
-    matchData.playerList.map((player: Player) => {
-      return [player.id, { name: player.name, score: 0 }];
-    }),
-  );
-
-  // Add Game History Scores if they exist
-  if (matchData.gameHistory) {
-    matchData.gameHistory.forEach((history: GameHistory) => {
-      history.points.forEach((pointHistory) => {
-        const storedValue = map.get(pointHistory.playerId);
-        if (storedValue) {
-          storedValue.score += pointHistory.points;
-        }
-      });
-    });
-  }
-
-  // Convert to Array
-  const calculatedLeaderboard = [...map].map(([id, value]) => ({
-    playerName: value.name,
-    playerId: id,
-    score: value.score,
-  }));
-
-  leaderboard.value = calculatedLeaderboard.sort((o1, o2) => {
-    if (o1.score > o2.score) {
-      return -1;
-    } else if (o1.score < o2.score) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-  if (
-    leaderboard.value.length > 0 &&
-    leaderboard.value[0].score >= matchData.pointsToWin
-  ) {
-    await updateStateOnlineMatch(props.code, MatchState.FINISHED);
-  }
 }
 
 const setCurrentGame = async (item: SpinnerItem) => {
