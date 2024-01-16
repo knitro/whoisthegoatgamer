@@ -11,13 +11,22 @@
                 :style="
                   'background: ' +
                   stringToColour(
-                    matchData ? matchData.currentGame.name : 'Random Game',
+                    matchData
+                      ? matchData.currentGame.history.name
+                      : 'Random Game',
                   ).backgroundColour
                 "
               >
                 <span class="text">
-                  {{ matchData ? matchData.currentGame.name : "Random Game" }}
+                  {{
+                    matchData
+                      ? matchData.currentGame.history.name
+                      : "Random Game"
+                  }}
                 </span>
+                <span class="subtitle">{{
+                  matchData ? matchData.currentGame.option.name : ""
+                }}</span>
               </v-card>
             </v-card>
           </v-col>
@@ -112,7 +121,6 @@
 
 <script setup lang="ts">
 import {
-  GameHistory,
   Match,
   MatchState,
   Player,
@@ -259,13 +267,14 @@ onMounted(() => {
 
   .scroller-item {
     height: 200px;
-    line-height: 200px;
     text-align: center;
     span.text {
-      display: inline-block;
-      vertical-align: middle;
-      line-height: normal;
+      margin-top: 64px;
+      display: block;
       font-size: 36px;
+    }
+    span.subtitle {
+      font-size: 20px;
     }
   }
 }

@@ -30,7 +30,7 @@
 
         <v-card-text>
           The game selected is
-          <b>{{ matchData?.currentGame.name }}</b
+          <b>{{ matchData?.currentGame.history.name }}</b
           >. Choose to accept the game chosen or use one of your vetos.
         </v-card-text>
         <v-card-actions>
@@ -74,14 +74,16 @@
         <v-card-text>
           The host has submitted the following scores for
           <b>{{
-            matchData && matchData.currentGame ? matchData.currentGame.name : ""
+            matchData && matchData.currentGame
+              ? matchData.currentGame.history.name
+              : ""
           }}</b
           >.
         </v-card-text>
         <v-list>
           <v-list-item
             v-if="matchData && matchData.currentGame"
-            v-for="playerScoreData in matchData?.currentGame.points"
+            v-for="playerScoreData in matchData?.currentGame.history.points"
             v-bind:key="'scoring_' + playerScoreData.playerId"
           >
             {{
@@ -215,12 +217,19 @@ async function checkIfAllReady(matchData: Match) {
     if (matchData.state == MatchState.AWAIT_ACCEPTANCE) {
       await updateStateOnlineMatch(props.id, MatchState.GAMEPLAY);
       await unreadyAllPlayers(matchData);
-      await removeGameListOnlineMatch(props.id, matchData.currentGame.id);
+      await removeGameListOnlineMatch(
+        props.id,
+        matchData.currentGame.history.id,
+      );
+      await addToChatHistoryBotOnlineMatch(
+        props.id,
+        matchData.currentGame.link,
+      );
     } else if (matchData.state == MatchState.AWAIT_RESULTS) {
       const currentGame = matchData.currentGame;
       await updateStateAndGameOnlineMatch(props.id, MatchState.GAME, null);
       await unreadyAllPlayers(matchData);
-      await addToGameHistoryOnlineMatch(props.id, currentGame);
+      await addToGameHistoryOnlineMatch(props.id, currentGame.history);
     }
   }
 }
@@ -258,7 +267,7 @@ async function vetoGame() {
     const name = idNameMap.value.get(auth.currentUser.uid);
     await addToChatHistoryBotOnlineMatch(
       props.id,
-      name + " has vetoed " + matchData.value.currentGame.name + "!",
+      name + " has vetoed " + matchData.value.currentGame.history.name + "!",
     );
     await playerVetoOnlineMatch(
       props.id,

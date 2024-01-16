@@ -12,7 +12,7 @@ export interface Match {
   chatLog: ChatLog[];
   gameHistory: GameHistory[];
   state: MatchState;
-  currentGame: GameHistory;
+  currentGame: CurrentGame;
   numOfSpins: number;
   pointsToWin: number;
   maxNumberOfVetos: number;
@@ -64,6 +64,12 @@ export enum MatchState {
   FINISHED,
 }
 
+export interface CurrentGame {
+  history: GameHistory;
+  link: string;
+  option: GameOption;
+}
+
 export interface PlayerPoints {
   playerId: string;
   points: number;
@@ -74,16 +80,19 @@ export interface PlayerPoints {
  * This should be the same as Match, except it does not include:
  *  - code
  *  - playerRequests
+ *  - gameList
  *  - chatLog
  *  - gameHistory
- *  - playerList
- *  - numOfSpins;
+ *  - currentGame
+ *  - numOfSpins
+ *  - currentGame
+ *  - brackets
  */
 export interface MatchInitialisation {
   hostId: string; // Player ID of the Match Host
-  state: MatchState;
   playerList: Object;
   gameList: Object;
+  state: MatchState;
   pointsToWin: number;
   maxNumberOfVetos: number;
 }
@@ -101,7 +110,7 @@ export interface MatchFirebaseObject {
   chatLog: Object;
   gameHistory: Object;
   state: MatchState;
-  currentGame: GameHistory;
+  currentGame: CurrentGame;
   numOfSpins: number;
   pointsToWin: number;
   maxNumberOfVetos: number;

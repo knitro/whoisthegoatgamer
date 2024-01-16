@@ -172,7 +172,7 @@ const setCurrentGame = async (item: SpinnerItem) => {
     );
     await addToChatHistoryBotOnlineMatch(
       props.code,
-      game.name + " has been selected",
+      game.name + " has been selected.",
     );
   }
 };

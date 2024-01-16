@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import {
   ChatLog,
   ChatLogFirebaseObject,
+  CurrentGame,
   GameEntry,
   GameHistory,
   Match,
@@ -43,8 +44,25 @@ export function updateStateAndGameOnlineMatch(
   game: GameEntry | null,
 ): Promise<boolean> {
   const dbRef = ref(db, `series/${joinCode}`);
+
+  let gameToSave: CurrentGame | null = null;
+  if (game != null) {
+    // Pick random option
+    const randomIndex = Math.floor(Math.random() * game.options.length);
+
+    gameToSave = {
+      history: {
+        id: game.id,
+        name: game.name,
+        points: [],
+      },
+      link: game.link,
+      option: game.options[randomIndex],
+    };
+  }
+
   return update(dbRef, {
-    currentGame: game,
+    currentGame: gameToSave,
     state: state,
   })
     .then(() => {
@@ -94,7 +112,10 @@ export async function updateCurrentGameOnlineMatch(
   joinCode: string,
   playerPoints: PlayerPoints[],
 ) {
-  const currentGamePointsRef = ref(db, `series/${joinCode}/currentGame`);
+  const currentGamePointsRef = ref(
+    db,
+    `series/${joinCode}/currentGame/history`,
+  );
   return update(currentGamePointsRef, {
     points: playerPoints,
   })
