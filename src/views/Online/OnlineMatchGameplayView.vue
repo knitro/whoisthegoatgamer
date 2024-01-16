@@ -35,6 +35,7 @@
                 :game-history="matchData?.gameHistory ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
                 :match-id="props.code"
+                :add-to-updater="addToLeaderboardUpdater"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -152,6 +153,8 @@ const idNameMap = ref<Map<string, string>>(new Map());
 
 const playerList = ref<PlayerAndScore[]>([]);
 
+const leaderboardUpdater = ref(() => {});
+
 async function getMatch() {
   const updater = (a: Match) => {
     matchData.value = a;
@@ -188,6 +191,9 @@ async function getMatch() {
 
     // Set Player Scores
     setPlayerAndScores(a.playerList);
+
+    // Update Leaderboard
+    leaderboardUpdater.value();
   };
 
   const accessDenied = () => {
@@ -235,6 +241,10 @@ async function submitScores() {
   await updateCurrentGameOnlineMatch(props.code, playerPoints);
   await updateStateOnlineMatch(props.code, MatchState.AWAIT_RESULTS);
 }
+
+const addToLeaderboardUpdater = (functionToAdd: () => void) => {
+  leaderboardUpdater.value = functionToAdd;
+};
 
 onMounted(() => {
   getMatch();

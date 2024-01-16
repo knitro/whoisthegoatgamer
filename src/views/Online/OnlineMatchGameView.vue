@@ -9,7 +9,7 @@
               :items="spinnerItems"
               :setterFunction="setCurrentGame"
               :code="props.code"
-              :add-to-updater="addToUpdater"
+              :add-to-updater="addToRollUpdater"
               :reset-activation-button="resetActivationButton"
             ></scroller-selector>
           </v-col>
@@ -27,6 +27,7 @@
                 :game-history="matchData?.gameHistory ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
                 :match-id="props.code"
+                :add-to-updater="addToLeaderboardUpdater"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -82,7 +83,10 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
 const idNameMap = ref<Map<string, string>>(new Map());
-const rollCallFunction = ref((a: number) => {});
+
+// Updater Functions
+const rollUpdater = ref((a: number) => {});
+const leaderboardUpdater = ref(() => {});
 const resetActivationButtonFunction = ref(() => {});
 
 const router = useRouter();
@@ -123,7 +127,7 @@ async function getMatch() {
 
     // Check for Random Spins
     if (a.numOfSpins > 0) {
-      rollCallFunction.value(a.numOfSpins);
+      rollUpdater.value(a.numOfSpins);
     }
 
     // Check for State Reset
@@ -140,6 +144,9 @@ async function getMatch() {
       };
     });
     spinnerItems.value = updatedSpinnerItems;
+
+    // Update Leaderboard
+    leaderboardUpdater.value();
   };
 
   const accessDenied = () => {
@@ -169,8 +176,12 @@ const setCurrentGame = async (item: SpinnerItem) => {
   }
 };
 
-const addToUpdater = (functionToAdd: (a: number) => void) => {
-  rollCallFunction.value = functionToAdd;
+const addToRollUpdater = (functionToAdd: (a: number) => void) => {
+  rollUpdater.value = functionToAdd;
+};
+
+const addToLeaderboardUpdater = (functionToAdd: () => void) => {
+  leaderboardUpdater.value = functionToAdd;
 };
 
 const resetActivationButton = (functionToAdd: () => void) => {

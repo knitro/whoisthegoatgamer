@@ -50,6 +50,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  addToUpdater: {
+    type: Function as PropType<(a: () => void) => void>,
+    required: true,
+  },
 });
 
 const leaderboard = ref<LeaderboardScore[]>([]);
@@ -80,13 +84,17 @@ function getColour(index: number) {
   }
 }
 
-onMounted(async () => {
+async function onUpdate() {
   leaderboard.value = await calculateScore(
     props.playerList,
     props.gameHistory,
     props.pointsToWin,
     props.matchId,
   );
+}
+
+onMounted(async () => {
+  props.addToUpdater(onUpdate);
 });
 </script>
 

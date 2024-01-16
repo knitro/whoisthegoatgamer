@@ -18,6 +18,7 @@
               :game-history="matchData?.gameHistory ?? []"
               :pointsToWin="matchData?.pointsToWin ?? 0"
               :match-id="props.code"
+              :add-to-updater="addToLeaderboardUpdater"
             ></leaderboard-display>
           </v-col>
         </v-col>
@@ -82,6 +83,8 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const idNameMap = ref<Map<string, string>>(new Map());
 
+const leaderboardUpdater = ref(() => {});
+
 const router = useRouter();
 
 async function getMatch() {
@@ -117,6 +120,9 @@ async function getMatch() {
         return [player.id, player.name];
       }),
     );
+
+    // Update Leaderboard
+    leaderboardUpdater.value();
   };
 
   const accessDenied = () => {
@@ -129,6 +135,10 @@ async function getMatch() {
     accessDenied,
   );
 }
+
+const addToLeaderboardUpdater = (functionToAdd: () => void) => {
+  leaderboardUpdater.value = functionToAdd;
+};
 
 onMounted(() => {
   getMatch();
