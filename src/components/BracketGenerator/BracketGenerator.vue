@@ -59,8 +59,9 @@
           <v-btn
             @click="pressGenerateRound"
             :disabled="
-              !isHost &&
-              (bracketArray.length == 0 || advancingPlayers.length >= 2)
+              !isHost ||
+              bracketArray.length == 0 ||
+              advancingPlayers.length >= 2
             "
             >Generate Round</v-btn
           >
