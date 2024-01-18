@@ -7,7 +7,7 @@
   >
     <v-list>
       <v-list-item
-        v-for="(scoreDisplay, index) in leaderboard"
+        v-for="(scoreDisplay, index) in leaderboardData"
         v-bind:key="'score_' + scoreDisplay.playerId"
       >
         <template v-slot:prepend>
@@ -29,34 +29,19 @@
 
 <script setup lang="ts">
 import { VCard, VList, VListItem } from "vuetify/lib/components/index.mjs";
-import { PropType, onMounted, ref } from "vue";
-import { GameHistory, Player } from "@/firebase/database/database-interfaces";
-import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
+import { PropType } from "vue";
+import { LeaderboardScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
-  playerList: {
-    type: Array as PropType<Player[]>,
-    required: true,
-  },
-  gameHistory: {
-    type: Array as PropType<GameHistory[]>,
+  leaderboardData: {
+    type: Array as PropType<LeaderboardScore[]>,
     required: true,
   },
   pointsToWin: {
     type: Number,
     required: true,
   },
-  matchId: {
-    type: String,
-    required: true,
-  },
-  addToUpdater: {
-    type: Function as PropType<(a: () => void) => void>,
-    required: true,
-  },
 });
-
-const leaderboard = ref<LeaderboardScore[]>([]);
 
 function getIcon(index: number) {
   switch (index) {
@@ -83,20 +68,6 @@ function getColour(index: number) {
       return "#000000";
   }
 }
-
-async function onUpdate() {
-  leaderboard.value = await calculateScore(
-    props.playerList,
-    props.gameHistory,
-    props.pointsToWin,
-    props.matchId,
-  );
-}
-
-onMounted(async () => {
-  props.addToUpdater(onUpdate);
-  await onUpdate();
-});
 </script>
 
 <style scoped lang="scss">

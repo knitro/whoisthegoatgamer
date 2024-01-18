@@ -40,11 +40,8 @@
             </v-col>
             <v-col cols="5">
               <leaderboard-display
-                :player-list="matchData?.playerList ?? []"
-                :game-history="matchData?.gameHistory ?? []"
+                :leaderboard-data="leaderboard ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
-                :match-id="props.code"
-                :add-to-updater="addToLeaderboardUpdater"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -140,6 +137,7 @@ import {
 } from "@/firebase/database/database-match";
 import { stringToColour } from "@/logic/string-to-colour";
 import BracketGenerator from "@/components/BracketGenerator/BracketGenerator.vue";
+import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
   code: {
@@ -161,10 +159,10 @@ const idNameMap = ref<Map<string, string>>(new Map());
 
 const playerList = ref<PlayerAndScore[]>([]);
 
-const leaderboardUpdater = ref(() => {});
+const leaderboard = ref<LeaderboardScore[]>([]);
 
 async function getMatch() {
-  const updater = (a: Match) => {
+  const updater = async (a: Match) => {
     matchData.value = a;
 
     const currentUser = auth.currentUser;
@@ -201,7 +199,12 @@ async function getMatch() {
     setPlayerAndScores(a.playerList);
 
     // Update Leaderboard
-    leaderboardUpdater.value();
+    leaderboard.value = await calculateScore(
+      a.playerList,
+      a.gameHistory,
+      a.pointsToWin,
+      a.code,
+    );
   };
 
   const accessDenied = () => {
@@ -249,10 +252,6 @@ async function submitScores() {
   await updateCurrentGameOnlineMatch(props.code, playerPoints);
   await updateStateOnlineMatch(props.code, MatchState.AWAIT_RESULTS);
 }
-
-const addToLeaderboardUpdater = (functionToAdd: () => void) => {
-  leaderboardUpdater.value = functionToAdd;
-};
 
 onMounted(() => {
   getMatch();

@@ -24,11 +24,8 @@
             </v-col>
             <v-col cols="5">
               <leaderboard-display
-                :player-list="matchData?.playerList ?? []"
-                :game-history="matchData?.gameHistory ?? []"
+                :leaderboard-data="leaderboard ?? []"
                 :pointsToWin="matchData?.pointsToWin ?? 0"
-                :match-id="props.code"
-                :add-to-updater="addToLeaderboardUpdater"
               ></leaderboard-display>
             </v-col>
           </v-row>
@@ -71,6 +68,7 @@ import {
   addToChatHistoryBotOnlineMatch,
   updateStateAndGameOnlineMatch,
 } from "@/firebase/database/database-match";
+import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
   code: {
@@ -84,10 +82,10 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const spinnerItems = ref<SpinnerItem[]>([]);
 const idNameMap = ref<Map<string, string>>(new Map());
+const leaderboard = ref<LeaderboardScore[]>([]);
 
 // Updater Functions
 const rollUpdater = ref((a: number) => {});
-const leaderboardUpdater = ref(() => {});
 const resetActivationButtonFunction = ref(() => {});
 
 const router = useRouter();
@@ -147,7 +145,12 @@ async function getMatch() {
     spinnerItems.value = updatedSpinnerItems;
 
     // Update Leaderboard
-    leaderboardUpdater.value();
+    leaderboard.value = await calculateScore(
+      a.playerList,
+      a.gameHistory,
+      a.pointsToWin,
+      a.code,
+    );
   };
 
   const accessDenied = () => {
@@ -180,10 +183,6 @@ const setCurrentGame = async (item: SpinnerItem) => {
 
 const addToRollUpdater = (functionToAdd: (a: number) => void) => {
   rollUpdater.value = functionToAdd;
-};
-
-const addToLeaderboardUpdater = (functionToAdd: () => void) => {
-  leaderboardUpdater.value = functionToAdd;
 };
 
 const resetActivationButton = (functionToAdd: () => void) => {
