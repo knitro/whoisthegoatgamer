@@ -12,41 +12,14 @@
 
 <script setup lang="ts">
 import { VCard } from "vuetify/lib/components/index.mjs";
-import { PropType, onMounted, ref } from "vue";
-import { GameHistory, Player } from "@/firebase/database/database-interfaces";
-import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
+import { PropType } from "vue";
+import { LeaderboardScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
-  playerList: {
-    type: Array as PropType<Player[]>,
+  topPlayer: {
+    type: Object as PropType<LeaderboardScore>,
     required: true,
   },
-  gameHistory: {
-    type: Array as PropType<GameHistory[]>,
-    required: true,
-  },
-  pointsToWin: {
-    type: Number,
-    required: true,
-  },
-  matchId: {
-    type: String,
-    required: true,
-  },
-});
-
-const topPlayer = ref<LeaderboardScore>();
-
-onMounted(async () => {
-  const leaderboard = await calculateScore(
-    props.playerList,
-    props.gameHistory,
-    props.pointsToWin,
-    props.matchId,
-  );
-  if (leaderboard.length > 0) {
-    topPlayer.value = leaderboard[0];
-  }
 });
 </script>
 

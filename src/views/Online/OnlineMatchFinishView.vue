@@ -5,20 +5,12 @@
       <v-row>
         <v-col cols="6">
           <v-col cols="12">
-            <goat-display
-              :player-list="matchData?.playerList ?? []"
-              :game-history="matchData?.gameHistory ?? []"
-              :pointsToWin="matchData?.pointsToWin ?? 0"
-              :match-id="props.code"
-            ></goat-display>
+            <goat-display :top-player="leaderboard[0] ?? null"></goat-display>
           </v-col>
           <v-col cols="12">
             <leaderboard-display
-              :player-list="matchData?.playerList ?? []"
-              :game-history="matchData?.gameHistory ?? []"
+              :leaderboard-data="leaderboard ?? []"
               :pointsToWin="matchData?.pointsToWin ?? 0"
-              :match-id="props.code"
-              :add-to-updater="addToLeaderboardUpdater"
             ></leaderboard-display>
           </v-col>
         </v-col>
@@ -70,6 +62,7 @@ import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDispl
 import ConfettiExplosion from "vue-confetti-explosion";
 import { VCard, VList, VListItem } from "vuetify/lib/components/index.mjs";
 import GoatDisplay from "@/components/LeaderboardDisplay/GoatDisplay.vue";
+import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
 
 const props = defineProps({
   code: {
@@ -83,7 +76,7 @@ const matchData = ref<Match | null>(null);
 const unsubscribeFunction = ref<() => void>(() => {});
 const idNameMap = ref<Map<string, string>>(new Map());
 
-const leaderboardUpdater = ref(() => {});
+const leaderboard = ref<LeaderboardScore[]>([]);
 
 const router = useRouter();
 
@@ -122,7 +115,12 @@ async function getMatch() {
     );
 
     // Update Leaderboard
-    leaderboardUpdater.value();
+    leaderboard.value = await calculateScore(
+      a.playerList,
+      a.gameHistory,
+      a.pointsToWin,
+      a.code,
+    );
   };
 
   const accessDenied = () => {
@@ -135,10 +133,6 @@ async function getMatch() {
     accessDenied,
   );
 }
-
-const addToLeaderboardUpdater = (functionToAdd: () => void) => {
-  leaderboardUpdater.value = functionToAdd;
-};
 
 onMounted(() => {
   getMatch();
