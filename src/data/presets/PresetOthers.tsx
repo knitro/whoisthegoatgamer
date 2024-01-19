@@ -46,10 +46,11 @@ export const PRESET_OTHER_GAMES: GameEntry[] = [
   },
   {
     id: "pokemon-speedrun",
-    name: "Pokemon Emerald Randomiser Speedrun",
+    name: "Pokemon Emerald",
     link: "",
     options: [
-      { name: "First to beat Rustboro City Gym", requiresPairing: false },
+      { name: "Randomiser: Rustboro City Gym", requiresPairing: false },
+      { name: "Battle Tower", requiresPairing: false },
     ],
   },
 ];
