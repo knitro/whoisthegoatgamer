@@ -58,7 +58,10 @@
         <template v-slot:append>
           <v-btn
             @click="pressGenerateRound"
-            :disabled="!isHost || advancingPlayers.length < 2"
+            :disabled="
+              !isHost ||
+              (advancingPlayers.length < 2 && bracketArray.length > 0)
+            "
           >
             Generate Round
           </v-btn>

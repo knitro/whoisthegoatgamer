@@ -274,8 +274,8 @@ async function vetoGame() {
       auth.currentUser.uid,
       updatedVetoCount,
     );
-    await updateStateOnlineMatch(props.id, MatchState.GAME);
     await unreadyAllPlayers(matchData.value);
+    await updateStateOnlineMatch(props.id, MatchState.GAME);
   }
 }
 

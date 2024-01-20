@@ -71,7 +71,7 @@ export async function createOnlineMatch(
   const playerListObj: Record<string, any> = {};
   playerListObj[currentUser.uid] = {
     name: playerName,
-    vetos: 1,
+    vetos: numberOfVetos,
     isReady: false,
   };
 

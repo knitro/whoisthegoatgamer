@@ -199,11 +199,15 @@ async function getMatch() {
 }
 
 async function acceptRequest(request: PlayerRequest) {
+  if (matchData.value == null) {
+    return;
+  }
+
   const addedPlayer: Player = {
     id: request.id,
     name: request.name,
     isReady: false,
-    vetos: 1,
+    vetos: matchData.value.maxNumberOfVetos,
   };
   await addPlayerListOnlineMatch(props.code, addedPlayer);
   await removePlayerRequestOnlineMatch(props.code, request.id);
