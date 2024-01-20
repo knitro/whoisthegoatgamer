@@ -37,7 +37,8 @@
               :code="matchData ? matchData.code : ''"
               :gameList="matchData ? matchData.gameList : []"
               :is-disabled="
-                matchData ? matchData.state !== MatchState.GAME : false
+                (matchData ? matchData.state !== MatchState.GAME : false) ||
+                !isHost
               "
             ></game-list>
           </v-col>
