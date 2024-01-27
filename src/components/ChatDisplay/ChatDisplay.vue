@@ -26,7 +26,8 @@
         <a
           v-if="
             chatLog.authorId == 'match-bot' &&
-            chatLog.message.startsWith('https://')
+            (chatLog.message.startsWith('https://') ||
+              chatLog.message.startsWith('steam://'))
           "
           :href="chatLog.message"
           target="_blank"
