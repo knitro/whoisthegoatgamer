@@ -27,7 +27,7 @@ export const PRESET_WEB_GAMES_DAILIES: GameEntry[] = [
   },
   {
     id: "contexto",
-    name: "Worldle",
+    name: "Contexto",
     link: "https://contexto.me/",
     options: [{ name: "Daily", requiresPairing: false }],
   },

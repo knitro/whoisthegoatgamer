@@ -50,7 +50,7 @@ export const PRESET_OTHER_GAMES: GameEntry[] = [
     link: "",
     options: [
       { name: "Randomiser: Rustboro City Gym", requiresPairing: false },
-      { name: "Battle Tower", requiresPairing: false },
+      { name: "First to 7: Battle Factory", requiresPairing: false },
     ],
   },
 ];
