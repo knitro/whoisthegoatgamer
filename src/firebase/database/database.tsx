@@ -216,7 +216,7 @@ function generateJoinCode(): string {
   return generatedCode;
 }
 
-function createArrayWithIdFromObject(object: Object) {
+export function createArrayWithIdFromObject(object: Object) {
   const keyPairs = Object.entries(object);
   const returnArray = keyPairs.map((currentKeyPair: [string, any]) => {
     const obj = currentKeyPair[1];

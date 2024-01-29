@@ -17,8 +17,7 @@
           <v-row>
             <v-col cols="7">
               <chat-display
-                :code="matchData ? matchData.code : ''"
-                :chatLogs="matchData ? matchData?.chatLog : []"
+                :code="code"
                 :player-id-name-mapping="idNameMap"
               ></chat-display>
             </v-col>
@@ -65,11 +64,9 @@ import ScrollerSelector from "@/components/Spinner/ScrollerSelector.vue";
 import LeaderboardDisplay from "@/components/LeaderboardDisplay/LeaderboardDisplay.vue";
 import ChatDisplay from "@/components/ChatDisplay/ChatDisplay.vue";
 import { SpinnerItem } from "@/components/Spinner/SpinnerInterfaces";
-import {
-  addToChatHistoryBotOnlineMatch,
-  updateStateAndGameOnlineMatch,
-} from "@/firebase/database/database-match";
+import { updateStateAndGameOnlineMatch } from "@/firebase/database/database-match";
 import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
+import { addToChatHistoryBotOnlineMatch } from "@/firebase/database/database-chat";
 
 const props = defineProps({
   code: {

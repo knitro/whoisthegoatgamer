@@ -141,7 +141,6 @@ import OnlineMatchGameplayView from "./OnlineMatchGameplayView.vue";
 import OnlineMatchFinishView from "./OnlineMatchFinishView.vue";
 import WaitingImage from "@/assets/images/trees.png";
 import {
-  addToChatHistoryBotOnlineMatch,
   addToGameHistoryOnlineMatch,
   removeGameListOnlineMatch,
   setNumOfSpinsOnlineMatch,
@@ -154,6 +153,7 @@ import {
   playerVetoOnlineMatch,
   setAllPlayersUnready,
 } from "@/firebase/database/database-players";
+import { addToChatHistoryBotOnlineMatch } from "@/firebase/database/database-chat";
 
 const props = defineProps({
   id: {

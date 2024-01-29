@@ -33,8 +33,7 @@
           <v-row>
             <v-col cols="7">
               <chat-display
-                :code="matchData ? matchData.code : ''"
-                :chatLogs="matchData ? matchData?.chatLog : []"
+                :code="code"
                 :player-id-name-mapping="idNameMap"
               ></chat-display>
             </v-col>
