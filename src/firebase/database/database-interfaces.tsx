@@ -1,3 +1,4 @@
+import { GameEntry, GameOption } from "@/common/types";
 import { BracketMatch } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
 
 /**
@@ -29,18 +30,6 @@ export interface Player {
 export interface PlayerRequest {
   name: string;
   id: string;
-}
-
-export interface GameEntry {
-  id: string;
-  name: string;
-  link: string;
-  options: GameOption[];
-}
-
-export interface GameOption {
-  name: string;
-  requiresPairing: boolean;
 }
 
 export interface ChatLog {
