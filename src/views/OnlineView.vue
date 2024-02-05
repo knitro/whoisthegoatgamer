@@ -34,12 +34,10 @@
                       v-model="preset"
                       label="Presets"
                       :items="
-                        Object.keys(PresetOption).map((key) => {
+                        Object.keys(GameTags).map((key) => {
                           return {
-                            title:
-                              PresetOption[key as keyof typeof PresetOption],
-                            value:
-                              PresetOption[key as keyof typeof PresetOption],
+                            title: GameTags[key as keyof typeof GameTags],
+                            value: GameTags[key as keyof typeof GameTags],
                           };
                         })
                       "
@@ -160,7 +158,7 @@ import {
   VImg,
 } from "vuetify/lib/components/index.mjs";
 import { requestJoinMatch } from "@/firebase/database/database-request";
-import { PresetOption } from "@/data/presets/Preset";
+import { GameTags } from "@/common/enums";
 
 const router = useRouter();
 
@@ -174,7 +172,7 @@ const showJoinLoadingOverlay = ref(false);
 const opponentsName = ref("");
 
 // Game Settings
-const preset = ref<PresetOption[]>([]);
+const preset = ref<GameTags[]>([]);
 const pointsToWin = ref(10);
 const numberOfVetos = ref(1);
 
