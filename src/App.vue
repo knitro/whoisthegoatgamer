@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { requestPermission } from "./firebase/messaging/messaging-push";
+import { requestPermission } from "./firebase/messaging/messaging-token-permission";
 
 onMounted(() => {
   requestPermission();
