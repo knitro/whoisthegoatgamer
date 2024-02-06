@@ -4,9 +4,7 @@ import {
   ChatLog,
   ChatLogFirebaseObject,
   CurrentGame,
-  GameEntry,
   GameHistory,
-  GameOption,
   Match,
   MatchState,
   PlayerPoints,
@@ -16,6 +14,7 @@ import {
   BracketPairing,
   BracketPlayer,
 } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
+import { GameEntry, GameOption } from "@/common/types";
 
 ////////////////////////////////////////////////////////
 // Main Functions
