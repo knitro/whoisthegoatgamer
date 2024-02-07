@@ -355,6 +355,7 @@ async function rejectScores() {
     matchData.value.state === MatchState.AWAIT_RESULTS
   ) {
     await updateStateOnlineMatch(props.id, MatchState.GAMEPLAY);
+    await unreadyAllPlayers(matchData.value);
   }
 }
 
