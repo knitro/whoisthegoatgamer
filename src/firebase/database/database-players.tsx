@@ -1,27 +1,38 @@
 import {
-  child,
-  get,
   onValue,
   ref,
-  serverTimestamp,
   set,
   update,
   Unsubscribe,
   remove,
 } from "firebase/database";
-import { auth, db } from "../firebase";
-import {
-  Match,
-  MatchInitialisation,
-  MatchState,
-  Player,
-  PlayerFirebaseObject,
-  PlayerRequest,
-} from "./database-interfaces";
+import { db } from "../firebase";
+import { Player, PlayerFirebaseObject } from "./database-interfaces";
+import { createArrayWithIdFromObject } from "./database";
 
 ////////////////////////////////////////////////////////
 // Main Functions
 ////////////////////////////////////////////////////////
+
+export async function getPlayerListListener(
+  joinCode: string,
+  updater: (a: Player[]) => void,
+  accessDenied: () => void,
+): Promise<Unsubscribe> {
+  const dbRef = ref(db, `series/${joinCode}/playerList`);
+
+  // TODO:: Replace Value Event Listener with Child Listeners (onChildAdded, onChildChanged, onChildRemoved)
+  const unsubscribeFunction = onValue(dbRef, (snapshot) => {
+    if (snapshot.val()) {
+      const snapshotData = snapshot.val();
+      const playerList: Player[] = createArrayWithIdFromObject(snapshotData);
+      updater(playerList);
+    } else {
+      accessDenied();
+    }
+  });
+  return unsubscribeFunction;
+}
 
 export function addPlayerListOnlineMatch(
   joinCode: string,
