@@ -2,7 +2,7 @@
   <v-card
     title="Leaderboard"
     :subtitle="'First to ' + pointsToWin"
-    class="overflow-y-auto"
+    class="overflow-y-auto curved-border"
     max-height="400px"
   >
     <v-list>
@@ -73,5 +73,8 @@ function getColour(index: number) {
 <style scoped lang="scss">
 .margin-right-8 {
   margin-right: 8px;
+}
+.curved-border {
+  border-radius: 16px;
 }
 </style>

@@ -1,5 +1,9 @@
 <template>
-  <v-card title="Bracket Generator" class="overflow-y-auto" max-height="400px">
+  <v-card
+    title="Bracket Generator"
+    class="overflow-y-auto curved-border"
+    max-height="400px"
+  >
     <v-list>
       <v-list-item
         v-if="bracketArray.length == 0"
@@ -189,5 +193,9 @@ function generateBracket(
 <style scoped lang="scss">
 .margin-right-8 {
   margin-right: 8px;
+}
+
+.curved-border {
+  border-radius: 16px;
 }
 </style>

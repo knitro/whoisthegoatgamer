@@ -10,4 +10,5 @@ export interface GameOption {
   name: string;
   requiresPairing: boolean;
   updatedLink?: string;
+  boostedChance: number; // Normal Chance is 1,
 }

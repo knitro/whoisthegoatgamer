@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="6">
           <v-col cols="12">
-            <v-card class="scroller-container">
+            <v-card class="scroller-container curved-border">
               <v-card
                 class="scroller-item"
                 :style="
@@ -53,6 +53,7 @@
               subtitle="Assign points when the game is finished"
               min-height="100%"
               min-width="100%"
+              class="curved-border"
             >
               <v-list>
                 <v-list-item
@@ -280,5 +281,9 @@ onMounted(() => {
 .score-display {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.curved-border {
+  border-radius: 16px;
 }
 </style>

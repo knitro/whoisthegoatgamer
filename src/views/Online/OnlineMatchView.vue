@@ -164,6 +164,7 @@
             @click="confirmGame()"
             variant="flat"
             prepend-icon="mdi-play"
+            :append-icon="hasReady ? 'mdi-check' : ''"
             color="green"
             :disabled="hasReady"
             rounded
