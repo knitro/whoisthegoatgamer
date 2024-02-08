@@ -18,6 +18,7 @@ export interface Match {
   pointsToWin: number;
   maxNumberOfVetos: number;
   brackets: BracketMatch[];
+  timer: TimerInfo;
 }
 
 export interface Player {
@@ -64,6 +65,11 @@ export interface PlayerPoints {
   points: number;
 }
 
+export interface TimerInfo {
+  amount: number;
+  started: boolean;
+}
+
 /**
  * Use this interface only to send Match data to firebase.
  * This should be the same as Match, except it does not include:
@@ -104,6 +110,7 @@ export interface MatchFirebaseObject {
   pointsToWin: number;
   maxNumberOfVetos: number;
   brackets: Object; // Currently Array to Keep Order
+  timer: TimerInfo;
 }
 
 /**

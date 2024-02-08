@@ -134,6 +134,7 @@ export async function getOnlineMatchListener(
         brackets: data.brackets
           ? createArrayWithIdFromObject(data.brackets)
           : [],
+        timer: data.timer,
       };
       updater(returnMatch);
     } else {
