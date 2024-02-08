@@ -1,3 +1,4 @@
+import { GameEntry, GameOption } from "@/common/types";
 import { BracketMatch } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
 
 /**
@@ -17,6 +18,7 @@ export interface Match {
   pointsToWin: number;
   maxNumberOfVetos: number;
   brackets: BracketMatch[];
+  timer: TimerInfo;
 }
 
 export interface Player {
@@ -29,18 +31,6 @@ export interface Player {
 export interface PlayerRequest {
   name: string;
   id: string;
-}
-
-export interface GameEntry {
-  id: string;
-  name: string;
-  link: string;
-  options: GameOption[];
-}
-
-export interface GameOption {
-  name: string;
-  requiresPairing: boolean;
 }
 
 export interface ChatLog {
@@ -73,6 +63,11 @@ export interface CurrentGame {
 export interface PlayerPoints {
   playerId: string;
   points: number;
+}
+
+export interface TimerInfo {
+  amount: number;
+  started: boolean;
 }
 
 /**
@@ -115,6 +110,7 @@ export interface MatchFirebaseObject {
   pointsToWin: number;
   maxNumberOfVetos: number;
   brackets: Object; // Currently Array to Keep Order
+  timer: TimerInfo;
 }
 
 /**

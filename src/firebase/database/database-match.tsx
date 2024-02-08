@@ -4,9 +4,7 @@ import {
   ChatLog,
   ChatLogFirebaseObject,
   CurrentGame,
-  GameEntry,
   GameHistory,
-  GameOption,
   Match,
   MatchState,
   PlayerPoints,
@@ -16,6 +14,7 @@ import {
   BracketPairing,
   BracketPlayer,
 } from "@/components/BracketGenerator/BracketGeneratorInterfaces";
+import { GameEntry, GameOption } from "@/common/types";
 
 ////////////////////////////////////////////////////////
 // Main Functions
@@ -49,8 +48,12 @@ export function updateStateAndGameOnlineMatch(
   let gameToSave: CurrentGame | null = null;
   if (game != null) {
     // Pick random option
+    let option: GameOption = {
+      name: "",
+      requiresPairing: false,
+      boostedChance: 0,
+    };
 
-    let option: GameOption = { name: "", requiresPairing: false };
     if (game.options && game.options.length > 0) {
       const randomIndex = Math.floor(Math.random() * game.options.length);
       option = game.options[randomIndex];

@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="6">
           <v-col cols="12">
-            <v-card class="scroller-container">
+            <v-card class="scroller-container curved-border">
               <v-card
                 class="scroller-item"
                 :style="
@@ -53,6 +53,7 @@
               subtitle="Assign points when the game is finished"
               min-height="100%"
               min-width="100%"
+              class="curved-border"
             >
               <v-list>
                 <v-list-item
@@ -90,6 +91,7 @@
               </v-list>
               <v-card-actions>
                 <v-btn
+                  class="button-padding"
                   variant="flat"
                   color="green"
                   @click="submitScores"
@@ -100,6 +102,9 @@
                 >
               </v-card-actions>
             </v-card>
+          </v-col>
+          <v-col cols="12">
+            <timer-card :match-id="props.code" :is-host="isHost"></timer-card>
           </v-col>
           <v-col cols="12">
             <bracket-generator
@@ -137,6 +142,7 @@ import {
 import { stringToColour } from "@/logic/string-to-colour";
 import BracketGenerator from "@/components/BracketGenerator/BracketGenerator.vue";
 import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
+import TimerCard from "@/components/Timer/TimerCard.vue";
 
 const props = defineProps({
   code: {
@@ -278,6 +284,15 @@ onMounted(() => {
 }
 
 .score-display {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.curved-border {
+  border-radius: 16px;
+}
+
+.button-padding {
   padding-left: 16px;
   padding-right: 16px;
 }

@@ -183,6 +183,7 @@ onMounted(() => {
   border: 2px solid #333;
   height: 200px;
   margin-bottom: 16px;
+  border-radius: 16px;
 
   .scroller-item {
     height: 200px;

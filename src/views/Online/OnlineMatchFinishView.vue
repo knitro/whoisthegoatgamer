@@ -17,7 +17,7 @@
         <ConfettiExplosion :particleCount="300" :duration="15000" :force="1" />
         <v-col cols="6">
           <v-col cols="12">
-            <v-card title="Game History">
+            <v-card title="Game History" class="curved-border">
               <v-list>
                 <v-list-group
                   v-for="(history, index) in matchData?.gameHistory"
@@ -139,4 +139,8 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.curved-border {
+  border-radius: 16px;
+}
+</style>

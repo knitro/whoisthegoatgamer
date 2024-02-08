@@ -25,14 +25,46 @@
 
     <v-overlay :z-index="0" v-model="showAcceptanceOverlay" persistent>
       <v-card :loading="hasReady" class="online-view-overlay">
-        <v-img :src="WaitingImage"></v-img>
-        <v-card-title>Confirm Game</v-card-title>
+        <v-row no-gutters>
+          <v-col cols="7">
+            <v-img :src="WaitingImage" class="curved-border"></v-img>
+            <v-card-title>Confirm Game</v-card-title>
 
-        <v-card-text>
-          The game selected is
-          <b>{{ matchData?.currentGame.history.name }}</b
-          >. Choose to accept the game chosen or use one of your vetos.
-        </v-card-text>
+            <v-card-text>
+              The game selected is
+              <b>{{ matchData?.currentGame.history.name }}</b
+              >. Choose to accept the game chosen or use one of your vetos.
+            </v-card-text>
+          </v-col>
+          <v-col cols="5">
+            <v-list>
+              <v-list-subheader>Player List</v-list-subheader>
+              <v-list-item
+                v-for="player in matchData?.playerList"
+                v-bind:key="'confirm_' + player.id"
+                :prependAvatar="'https://robohash.org/' + player.id + '.png'"
+                :base-color="
+                  player.isReady ? 'green-lighten-1' : 'red-lighten-1'
+                "
+              >
+                <v-list-item-title>{{ player.name }}</v-list-item-title>
+                <template v-slot:append>
+                  <div>{{ player.isReady ? "Confirmed" : "Not Ready" }}</div>
+
+                  <v-icon
+                    class="player-list-icon"
+                    :icon="
+                      player.isReady
+                        ? ' mdi-check-circle-outline'
+                        : 'mdi-close-circle-outline'
+                    "
+                  />
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-col>
+        </v-row>
+
         <v-card-actions>
           <v-btn
             @click="confirmGame()"
@@ -68,39 +100,71 @@
       max-width="800"
     >
       <v-card :loading="hasReady" class="online-view-overlay">
-        <v-img :src="WaitingImage"></v-img>
-        <v-card-title>Results Confirmation</v-card-title>
+        <v-row>
+          <v-col cols="7">
+            <v-img :src="WaitingImage" class="curved-border"></v-img>
+            <v-card-title>Results Confirmation</v-card-title>
 
-        <v-card-text>
-          The host has submitted the following scores for
-          <b>{{
-            matchData && matchData.currentGame
-              ? matchData.currentGame.history.name
-              : ""
-          }}</b
-          >.
-        </v-card-text>
-        <v-list>
-          <v-list-item
-            v-if="matchData && matchData.currentGame"
-            v-for="playerScoreData in matchData?.currentGame.history.points"
-            v-bind:key="'scoring_' + playerScoreData.playerId"
-          >
-            {{
-              matchData?.playerList.find(
-                (player) => player.id === playerScoreData.playerId,
-              )?.name
-            }}
-            <template v-slot:append>
-              {{ playerScoreData.points }}
-            </template>
-          </v-list-item>
-        </v-list>
+            <v-card-text>
+              The host has submitted the following scores for
+              <b>{{
+                matchData && matchData.currentGame
+                  ? matchData.currentGame.history.name
+                  : ""
+              }}</b
+              >.
+            </v-card-text>
+            <v-list>
+              <v-list-item
+                v-if="matchData && matchData.currentGame"
+                v-for="playerScoreData in matchData?.currentGame.history.points"
+                v-bind:key="'scoring_' + playerScoreData.playerId"
+              >
+                {{
+                  matchData?.playerList.find(
+                    (player) => player.id === playerScoreData.playerId,
+                  )?.name
+                }}
+                <template v-slot:append>
+                  {{ playerScoreData.points }}
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-col>
+          <v-col cols="5">
+            <v-list>
+              <v-list-subheader>Player List </v-list-subheader>
+              <v-list-item
+                v-for="player in matchData?.playerList"
+                v-bind:key="'confirm_' + player.id"
+                :prependAvatar="'https://robohash.org/' + player.id + '.png'"
+                :base-color="
+                  player.isReady ? 'green-lighten-1' : 'red-lighten-1'
+                "
+              >
+                <v-list-item-title>{{ player.name }}</v-list-item-title>
+                <template v-slot:append>
+                  <div>{{ player.isReady ? "Confirmed" : "Not Ready" }}</div>
+
+                  <v-icon
+                    class="player-list-icon"
+                    :icon="
+                      player.isReady
+                        ? ' mdi-check-circle-outline'
+                        : 'mdi-close-circle-outline'
+                    "
+                  />
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-col>
+        </v-row>
         <v-card-actions>
           <v-btn
             @click="confirmGame()"
             variant="flat"
             prepend-icon="mdi-play"
+            :append-icon="hasReady ? 'mdi-check' : ''"
             color="green"
             :disabled="hasReady"
             rounded
@@ -292,6 +356,7 @@ async function rejectScores() {
     matchData.value.state === MatchState.AWAIT_RESULTS
   ) {
     await updateStateOnlineMatch(props.id, MatchState.GAMEPLAY);
+    await unreadyAllPlayers(matchData.value);
   }
 }
 
@@ -301,14 +366,24 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.curved-border {
+  border-radius: 16px;
+}
+
 .online-view-overlay {
   position: absolute;
   top: 50vh;
   left: 50vw;
   transform: translate(-50%, -50%);
-
+  width: 1000px;
+  border-radius: 16px;
   .ready-chip {
     margin-left: 8px;
+    height: 36px;
   }
+}
+
+.player-list-icon {
+  margin-left: 16px;
 }
 </style>

@@ -14,7 +14,7 @@ import { createArrayWithIdFromObject } from "./database";
 // Main Functions
 ////////////////////////////////////////////////////////
 
-export async function getPlayerListListener(
+export async function getTimerListener(
   joinCode: string,
   updater: (a: Player[]) => void,
   accessDenied: () => void,

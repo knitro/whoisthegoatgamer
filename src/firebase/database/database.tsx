@@ -15,7 +15,8 @@ import {
   MatchInitialisation,
   MatchState,
 } from "./database-interfaces";
-import { PresetOption, getPreset } from "@/data/presets/Preset";
+import { GameTags } from "@/common/enums";
+import { getGames } from "../firestore/firestore-games";
 
 ////////////////////////////////////////////////////////
 // Main Functions
@@ -30,7 +31,7 @@ import { PresetOption, getPreset } from "@/data/presets/Preset";
  */
 export async function createOnlineMatch(
   playerName: string,
-  preset: PresetOption[],
+  preset: GameTags[],
   pointsToWin: number,
   numberOfVetos: number,
 ): Promise<string> {
@@ -56,13 +57,14 @@ export async function createOnlineMatch(
 
   // Create GameList Object
   // This is done to reduce the depth of the RealTimeDatabase as arrays create indices of '0', '1' etc.
-  const gameListArray = getPreset(preset);
+  const gameListArray = await getGames(preset);
   const gameListObj: Record<string, any> = {};
   gameListArray.forEach((gameEntry) => {
     gameListObj[gameEntry.id] = {
       name: gameEntry.name,
       link: gameEntry.link,
       options: gameEntry.options,
+      tags: gameEntry.tags,
     };
   });
 
@@ -132,6 +134,7 @@ export async function getOnlineMatchListener(
         brackets: data.brackets
           ? createArrayWithIdFromObject(data.brackets)
           : [],
+        timer: data.timer,
       };
       updater(returnMatch);
     } else {

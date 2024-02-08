@@ -1,5 +1,5 @@
 <template>
-  <v-card class="goat-card">
+  <v-card class="goat-card curved-border">
     <span class="name">
       <v-icon icon="mdi-trophy"></v-icon>
       {{ topPlayer ? topPlayer.playerName : "ERROR" }}
@@ -44,5 +44,9 @@ const props = defineProps({
   .underlabel {
     font-size: 18px;
   }
+}
+
+.curved-border {
+  border-radius: 16px;
 }
 </style>

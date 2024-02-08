@@ -2,7 +2,7 @@
   <v-card
     title="Game List"
     :subtitle="gameList.length + ' Games'"
-    class="overflow-y-auto"
+    class="overflow-y-auto curved-border"
   >
     <v-list max-height="600px">
       <v-list-item v-for="game in gameList" v-bind:key="'game_' + game">
@@ -49,7 +49,7 @@ import {
   addGameListOnlineMatch,
   removeGameListOnlineMatch,
 } from "@/firebase/database/database-match";
-import { GameEntry } from "@/firebase/database/database-interfaces";
+import { GameEntry } from "@/common/types";
 
 const props = defineProps({
   code: {
@@ -83,4 +83,8 @@ async function addGame() {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.curved-border {
+  border-radius: 16px;
+}
+</style>

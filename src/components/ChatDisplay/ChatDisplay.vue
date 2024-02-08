@@ -1,5 +1,5 @@
 <template>
-  <v-card title="Chat">
+  <v-card title="Chat" class="curved-border">
     <v-list max-height="400px" lines="three" class="chat-list">
       <v-list-item
         v-for="chatLog in chatLogs"
@@ -149,5 +149,9 @@ onUnmounted(() => {
 
 .bottom-of-scroll {
   scroll-padding-bottom: 200px;
+}
+
+.curved-border {
+  border-radius: 16px;
 }
 </style>
