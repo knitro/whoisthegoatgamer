@@ -1,32 +1,17 @@
-import {
-  onValue,
-  ref,
-  set,
-  update,
-  Unsubscribe,
-  remove,
-} from "firebase/database";
+import { onValue, ref, update, Unsubscribe } from "firebase/database";
 import { db } from "../firebase";
-import { Player, PlayerFirebaseObject } from "./database-interfaces";
-import { createArrayWithIdFromObject } from "./database";
+import { TimerInfo } from "./database-interfaces";
 
-////////////////////////////////////////////////////////
-// Main Functions
-////////////////////////////////////////////////////////
-
-export async function getTimerListener(
-  joinCode: string,
-  updater: (a: Player[]) => void,
+export async function getTimerInfoListener(
+  matchId: string,
+  updater: (a: TimerInfo) => void,
   accessDenied: () => void,
 ): Promise<Unsubscribe> {
-  const dbRef = ref(db, `series/${joinCode}/playerList`);
-
-  // TODO:: Replace Value Event Listener with Child Listeners (onChildAdded, onChildChanged, onChildRemoved)
+  const dbRef = ref(db, `series/${matchId}/timer`);
   const unsubscribeFunction = onValue(dbRef, (snapshot) => {
     if (snapshot.val()) {
-      const snapshotData = snapshot.val();
-      const playerList: Player[] = createArrayWithIdFromObject(snapshotData);
-      updater(playerList);
+      const snapshotData = snapshot.val() as TimerInfo;
+      updater(snapshotData);
     } else {
       accessDenied();
     }
@@ -34,17 +19,12 @@ export async function getTimerListener(
   return unsubscribeFunction;
 }
 
-export function addPlayerListOnlineMatch(
-  joinCode: string,
-  player: Player,
-): Promise<boolean> {
-  const playerListRef = ref(db, `series/${joinCode}/playerList/${player.id}`);
-  const firebasePlayerData: PlayerFirebaseObject = {
-    name: player.name,
-    vetos: player.vetos,
-    isReady: player.isReady,
+export async function updateTimer(matchId: string, timeLeft: number) {
+  const dbRef = ref(db, `series/${matchId}/timer`);
+  const updateObject = {
+    timeLeft: timeLeft,
   };
-  return set(playerListRef, firebasePlayerData)
+  return update(dbRef, updateObject)
     .then(() => {
       // Data saved successfully!
       return true;
@@ -55,12 +35,13 @@ export function addPlayerListOnlineMatch(
     });
 }
 
-export function removePlayerListOnlineMatch(
-  joinCode: string,
-  playerId: string,
-): Promise<boolean> {
-  const playerListRef = ref(db, `series/${joinCode}/playerList/${playerId}`);
-  return remove(playerListRef)
+export async function pauseTimer(matchId: string, timeLeft: number) {
+  const dbRef = ref(db, `series/${matchId}/timer`);
+  const updateObject = {
+    isPaused: true,
+    timeLeft: timeLeft,
+  };
+  return update(dbRef, updateObject)
     .then(() => {
       // Data saved successfully!
       return true;
@@ -71,12 +52,13 @@ export function removePlayerListOnlineMatch(
     });
 }
 
-export async function playerConfirmOnlineMatch(
-  joinCode: string,
-  playerId: string,
-) {
-  const playerListRef = ref(db, `series/${joinCode}/playerList/${playerId}`);
-  return update(playerListRef, { isReady: true })
+export async function startTimer(matchId: string) {
+  const dbRef = ref(db, `series/${matchId}/timer`);
+  const updateObject = {
+    isPaused: false,
+    startTime: Date.now(),
+  };
+  return update(dbRef, updateObject)
     .then(() => {
       // Data saved successfully!
       return true;
@@ -85,43 +67,4 @@ export async function playerConfirmOnlineMatch(
       // The write failed...
       return false;
     });
-}
-
-export async function playerVetoOnlineMatch(
-  joinCode: string,
-  playerId: string,
-  updatedVetoCount: number,
-) {
-  const playerListRef = ref(db, `series/${joinCode}/playerList/${playerId}`);
-  return update(playerListRef, { vetos: updatedVetoCount })
-    .then(() => {
-      // Data saved successfully!
-      return true;
-    })
-    .catch((error) => {
-      // The write failed...
-      return false;
-    });
-}
-
-export async function setAllPlayersUnready(
-  joinCode: string,
-  playerIds: string[],
-) {
-  // Figure out way to reduce api calls
-
-  await Promise.all(
-    playerIds.map((id) => {
-      const playerListRef = ref(db, `series/${joinCode}/playerList/${id}`);
-      return update(playerListRef, { isReady: false })
-        .then(() => {
-          // Data saved successfully!
-          return true;
-        })
-        .catch((error) => {
-          // The write failed...
-          return false;
-        });
-    }),
-  );
 }
