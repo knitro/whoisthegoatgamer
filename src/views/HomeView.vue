@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <background-image :src="backgroundImage">
-      <v-container fluid class="online-view-center">
+  <background-display>
+    <div class="online-view-center">
+      <GoatGamerLogo></GoatGamerLogo>
+      <v-container fluid>
         <v-row align-content="center" justify="center">
           <v-col cols="8">
             <v-text-field
@@ -109,20 +110,20 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
-        <v-card loading class="online-view-overlay">
-          <v-img :src="waitingImage"></v-img>
-          <v-card-title>Waiting to Join Game...</v-card-title>
+    </div>
+    <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
+      <v-card loading class="online-view-overlay">
+        <v-img :src="waitingImage"></v-img>
+        <v-card-title>Waiting to Join Game...</v-card-title>
 
-          <v-card-text>
-            You have requested to join <b>{{ opponentsName }}</b
-            >'s game. Please wait as they choose to either accept or decline
-            your request.
-          </v-card-text>
-        </v-card>
-      </v-overlay>
-    </background-image>
-  </div>
+        <v-card-text>
+          You have requested to join <b>{{ opponentsName }}</b
+          >'s game. Please wait as they choose to either accept or decline your
+          request.
+        </v-card-text>
+      </v-card>
+    </v-overlay>
+  </background-display>
 </template>
 
 <script setup lang="ts">
@@ -133,9 +134,8 @@ import {
 import { auth } from "@/firebase/firebase";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import BackgroundImage from "@/components/Background/BackgroundImage.vue";
 import waitingImage from "@/assets/images/outside.png";
-import backgroundImage from "@/assets/backgrounds/range-outside.png";
+import BackgroundDisplay from "@/components/Background/BackgroundDisplay/BackgroundDisplay.vue";
 import {
   Match,
   Player,
@@ -157,6 +157,7 @@ import {
 } from "vuetify/lib/components/index.mjs";
 import { requestJoinMatch } from "@/firebase/database/database-request";
 import { GameTags } from "@/common/enums";
+import GoatGamerLogo from "@/components/GoatGamerLogo/GoatGamerLogo.vue";
 
 const router = useRouter();
 
