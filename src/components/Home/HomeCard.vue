@@ -3,7 +3,7 @@
     class="mx-auto home-card"
     max-width="600"
     height="100%"
-    @click="linkToPage(link)"
+    @click="clickFunction"
   >
     <v-img
       class="card-image"
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -46,17 +47,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  link: {
-    type: String,
+  clickFunction: {
+    type: Function as PropType<() => void>,
     required: true,
   },
 });
-
-const router = useRouter();
-
-function linkToPage(href: string) {
-  router.push(href);
-}
 </script>
 
 <style scoped lang="scss">
@@ -71,6 +66,7 @@ function linkToPage(href: string) {
 
 .home-card {
   background-color: #f5f5f5;
+  border-radius: 16px;
   transition: 0.2s; /* Animation */
   .card-text-light-grey {
     color: #a89796;

@@ -12,3 +12,9 @@ export enum GameTags {
   EGS = "Epic Games Store Games",
   PAID = "Paid Games",
 }
+
+export enum HomeState {
+  SELECT,
+  CREATE,
+  JOIN,
+}

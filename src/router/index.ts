@@ -1,7 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "@/firebase/firebase";
-import HomeView from "@/views/HomeView.vue";
+import HomeView from "@/views/Home/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import LogoutView from "@/views/LogoutView.vue";
 import OnlineMatchView from "@/views/Online/OnlineMatchView.vue";
