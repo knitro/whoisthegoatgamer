@@ -104,7 +104,10 @@
             </v-card>
           </v-col>
           <v-col cols="12">
-            <timer-card :match-id="props.code" :is-host="isHost"></timer-card>
+            <timer-online-card
+              :match-id="props.code"
+              :is-host="isHost"
+            ></timer-online-card>
           </v-col>
           <v-col cols="12">
             <bracket-generator
@@ -142,7 +145,7 @@ import {
 import { stringToColour } from "@/logic/string-to-colour";
 import BracketGenerator from "@/components/BracketGenerator/BracketGenerator.vue";
 import { LeaderboardScore, calculateScore } from "@/logic/LeaderboardLogic";
-import TimerCard from "@/components/Timer/TimerCard.vue";
+import TimerOnlineCard from "@/components/Timer/TimerOnlineCard.vue";
 
 const props = defineProps({
   code: {

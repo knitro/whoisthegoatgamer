@@ -8,7 +8,7 @@
         variant="text"
         width="40"
         @click="adjustTimer(adjustmentAmount)"
-        :disabled="!isHost || !isPaused"
+        :disabled="!isPaused"
       >
         {{ adjustmentAmount > 0 ? "+" + adjustmentAmount : adjustmentAmount }}
       </v-btn>
@@ -21,7 +21,6 @@
         variant="flat"
         rounded
         @click="startButtonPress()"
-        :disabled="!isHost"
       >
         Start
       </v-btn>
@@ -34,7 +33,6 @@
         variant="flat"
         rounded
         @click="pauseButtonPress()"
-        :disabled="!isHost"
       >
         Pause
       </v-btn>
@@ -47,7 +45,6 @@
         variant="flat"
         rounded
         @click="resetTimer()"
-        :disabled="!isHost"
       >
         Reset
       </v-btn>
@@ -58,16 +55,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const props = defineProps({
-  matchId: {
-    type: String,
-    required: true,
-  },
-  isHost: {
-    type: Boolean,
-    required: true,
-  },
-});
+const props = defineProps({});
 
 const timeRef = ref(0);
 const timeLabel = ref("00:00");

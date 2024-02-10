@@ -66,8 +66,9 @@ export interface PlayerPoints {
 }
 
 export interface TimerInfo {
-  amount: number;
-  started: boolean;
+  timeLeft: number;
+  isPaused: boolean;
+  startTime?: number;
 }
 
 /**
