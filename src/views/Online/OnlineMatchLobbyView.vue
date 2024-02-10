@@ -133,7 +133,6 @@ import {
 } from "vuetify/lib/components/index.mjs";
 import { onMounted, ref } from "vue";
 import WaitingImage from "@/assets/images/outhouse.png";
-import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import {

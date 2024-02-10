@@ -133,7 +133,6 @@ import {
 import { auth } from "@/firebase/firebase";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import BackgroundImage from "@/components/Background/BackgroundImage.vue";
 import waitingImage from "@/assets/images/outside.png";
 import backgroundImage from "@/assets/backgrounds/range-outside.png";

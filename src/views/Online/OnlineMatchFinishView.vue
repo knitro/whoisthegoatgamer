@@ -53,7 +53,6 @@
 <script setup lang="ts">
 import { Match, Player } from "@/firebase/database/database-interfaces";
 import { onMounted, ref } from "vue";
-import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";

@@ -54,7 +54,6 @@ import {
 } from "@/firebase/database/database-interfaces";
 import { VContainer, VRow, VCol } from "vuetify/lib/components/index.mjs";
 import { onMounted, ref } from "vue";
-import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import { useRouter } from "vue-router";
 import { auth } from "@/firebase/firebase";
 import { getOnlineMatchListener } from "@/firebase/database/database";

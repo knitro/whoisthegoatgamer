@@ -26,7 +26,6 @@ import firebase from "firebase/compat/app";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 import BackgroundImage from "@/components/Background/BackgroundImage.vue";
-import AppBarGoatGamer from "@/components/AppBar/AppBarGoatGamer.vue";
 import rangePortalBackgroundUrl from "@/assets/backgrounds/range-portal.png";
 
 // Compat Firebase Initialisation used for FirebaseUI
