@@ -4,7 +4,6 @@ import { auth } from "@/firebase/firebase";
 import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import LogoutView from "@/views/LogoutView.vue";
-import OnlineView from "@/views/OnlineView.vue";
 import OnlineMatchView from "@/views/Online/OnlineMatchView.vue";
 
 const routes = [
@@ -41,22 +40,6 @@ const routes = [
         },
       },
       {
-        path: "online",
-        name: "Online",
-        component: OnlineView,
-        meta: {
-          requiresAuth: true,
-        },
-      },
-      // {
-      //   path: "/online-fail",
-      //   name: "onlineFail",
-      //   component: OnlineFailView,
-      //   meta: {
-      //     requiresAuth: true,
-      //   },
-      // },
-      {
         path: "/online/:id",
         name: "onlineMatch",
         component: OnlineMatchView,
@@ -89,7 +72,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.matched.some((record) => record.meta.hideForAuth)) {
       if (user) {
-        next({ path: "/online" });
+        next({ path: "/home" });
       } else {
         next();
       }

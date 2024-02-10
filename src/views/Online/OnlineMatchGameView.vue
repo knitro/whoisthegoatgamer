@@ -1,6 +1,5 @@
 <template>
   <div>
-    <app-bar-goat-gamer title="Who Is the GOAT Gamer?"></app-bar-goat-gamer>
     <v-container fluid>
       <v-row>
         <v-col cols="6">
@@ -104,7 +103,7 @@ async function getMatch() {
       );
       if (filterForCurrentUser.length == 0) {
         // At this point, the user is no longer in the lobby
-        router.push("/online");
+        router.push("/home");
       }
     }
 
@@ -152,7 +151,7 @@ async function getMatch() {
   };
 
   const accessDenied = () => {
-    router.push("/online");
+    router.push("/home");
   };
 
   unsubscribeFunction.value = await getOnlineMatchListener(

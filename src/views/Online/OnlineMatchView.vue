@@ -257,7 +257,7 @@ async function getMatch() {
   };
 
   const accessDenied = () => {
-    router.push("/online");
+    router.push("/home");
   };
 
   unsubscribeFunction.value = await getOnlineMatchListener(

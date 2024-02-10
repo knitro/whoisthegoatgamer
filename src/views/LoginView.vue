@@ -1,8 +1,6 @@
 <template>
   <div>
     <background-image :src="rangePortalBackgroundUrl">
-      <app-bar-goat-gamer title="Login"></app-bar-goat-gamer>
-
       <div class="login-view-center">
         <v-card dark color="rgba(103, 58, 183, 0.95)" width="500">
           <v-card-title class="text-h5">
@@ -38,7 +36,7 @@ onMounted(() => {
   firebase.initializeApp(firebaseConfig);
   var uiConfig = {
     signInFlow: "popup",
-    signInSuccessUrl: "#/online",
+    signInSuccessUrl: "#/home",
     signInOptions: [
       // Leave the lines as is for the providers you want to offer your users.
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <app-bar-goat-gamer title="Match Lobby"></app-bar-goat-gamer>
     <div class="online-view-pick-ban-center">
       <v-card
         class="mx-auto"
@@ -175,7 +174,7 @@ async function getMatch() {
       );
       if (filterForCurrentUser.length == 0) {
         // At this point, the user is no longer in the lobby
-        router.push("/online");
+        router.push("/home");
       }
     }
 
@@ -188,7 +187,7 @@ async function getMatch() {
   };
 
   const accessDenied = () => {
-    router.push("/online");
+    router.push("/home");
   };
 
   unsubscribeFunction.value = await getOnlineMatchListener(
@@ -227,13 +226,13 @@ async function startMatch() {
 
 async function cancelMatch() {
   await cancelOnlineMatch(props.code);
-  router.push("/online");
+  router.push("/home");
 }
 
 async function removeSelf() {
   if (matchData.value && auth.currentUser) {
     await removeFromLobby(auth.currentUser.uid);
-    router.push("/online");
+    router.push("/home");
   }
 }
 
