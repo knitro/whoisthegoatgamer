@@ -1,17 +1,17 @@
 <template>
   <background-display>
     <div class="online-view-center">
-      <GoatGamerLogo></GoatGamerLogo>
+      <GoatGamerLogo class="logo"></GoatGamerLogo>
       <v-container fluid>
         <v-row align-content="center" justify="center">
-          <v-col cols="8">
+          <v-col cols="6">
             <v-text-field
               :autofocus="true"
               v-model="playerName"
               outlined
               height="100"
               class="online-view-text-input"
-              label="Player Name"
+              label="Enter your Name"
               hint="This will be seen by your opponent to confirm that they have the right opponent."
               counter="20"
               :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
@@ -20,6 +20,7 @@
             </v-text-field>
           </v-col>
         </v-row>
+
         <v-row align-content="center" justify="center">
           <v-col cols="4">
             <v-card color="rgb(206, 121, 107)" dark>
@@ -316,11 +317,17 @@ function checkIfRequestStillExists(
 </script>
 
 <style scoped lang="scss">
+.logo {
+  margin: auto;
+  padding-bottom: 16px;
+}
+
 .online-view-center {
   position: absolute;
   top: 50vh;
   left: 50vw;
   transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .online-view-overlay {
