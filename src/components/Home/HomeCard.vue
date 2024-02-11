@@ -1,16 +1,24 @@
 <template>
   <v-card
     class="mx-auto home-card"
-    max-width="600"
+    max-width="300"
     height="100%"
     @click="clickFunction"
   >
-    <v-img
-      class="card-image"
-      :aspect-ratio="16 / 14"
-      :src="image"
-      cover
-    ></v-img>
+    <div class="image-container">
+      <img
+        class="card-image image-1"
+        :src="image1"
+      ></img>
+      <img
+        class="card-image image-2"
+        :src="image2"
+      ></img>
+      <img
+        class="card-image image-3"
+        :src="image3"
+      ></img>
+    </div>
     <div class="home-card-bottom">
       <v-card-text class="pt-6" style="position: relative">
         <div
@@ -32,10 +40,17 @@
 
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useRouter } from "vue-router";
 
 const props = defineProps({
-  image: {
+  image1: {
+    type: String,
+    required: true,
+  },
+  image2: {
+    type: String,
+    required: true,
+  },
+  image3: {
     type: String,
     required: true,
   },
@@ -87,6 +102,30 @@ const props = defineProps({
     transform-origin: 50% 50%;
     transition: transform 0.5s ease-out;
   }
+
+  .image-container {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    .image-1 {
+      opacity: 1;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .image-2 {
+      opacity: 0;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .image-3 {
+      opacity: 0;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
 }
 
 .home-card:hover {
@@ -101,6 +140,30 @@ const props = defineProps({
   .fill-on-hover {
     z-index: -10;
     transform: scale(100);
+  }
+
+  .image-container {
+    height: 300px;
+    width: 300px;
+    position: relative;
+    .image-1 {
+      animation: image-1-animate 1.5s ease-in-out forwards;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .image-2 {
+      animation: image-2-animate 1.5s ease-in-out forwards;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .image-3 {
+      animation: image-3-animate 1.5s ease-in-out forwards;
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+    }
   }
 }
 
@@ -125,5 +188,38 @@ const props = defineProps({
   color: white;
   font-family: courier, sans;
   z-index: 9;
+}
+
+@keyframes image-1-animate {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes image-2-animate {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes image-3-animate {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

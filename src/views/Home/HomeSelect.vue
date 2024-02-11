@@ -6,7 +6,9 @@
       cols="4"
     >
       <HomeCard
-        :image="cardData.image"
+        :image1="cardData.image1"
+        :image2="cardData.image2"
+        :image3="cardData.image3"
         :header="cardData.header"
         :subheader="cardData.subheader"
         :clickFunction="cardData.clickFunction"
@@ -31,10 +33,15 @@ import {
 import { VRow, VCol } from "vuetify/lib/components/index.mjs";
 import { requestJoinMatch } from "@/firebase/database/database-request";
 import { GameTags, HomeState } from "@/common/enums";
-import createGameImage from "@/assets/home/create-game.png";
-import joinGameImage from "@/assets/home/join-game.png";
 import HomeCard from "@/components/Home/HomeCard.vue";
 import { HomeCardItem } from "@/components/Home/HomeCardInterfaces";
+
+import createGameImage1 from "@/assets/home/create-game-1.png";
+import createGameImage2 from "@/assets/home/create-game-2.png";
+import createGameImage3 from "@/assets/home/create-game-3.png";
+import joinGameImage1 from "@/assets/home/join-game-1.png";
+import joinGameImage2 from "@/assets/home/join-game-2.png";
+import joinGameImage3 from "@/assets/home/join-game-3.png";
 
 const props = defineProps({
   setHomeState: {
@@ -45,14 +52,18 @@ const props = defineProps({
 
 const homeCardData: HomeCardItem[] = [
   {
-    image: createGameImage,
+    image1: createGameImage1,
+    image2: createGameImage2,
+    image3: createGameImage3,
     header: "Create a Game",
     subheader:
       "Create your own private lobby. You must be logged in to create a lobby",
     clickFunction: () => props.setHomeState(HomeState.CREATE),
   },
   {
-    image: joinGameImage,
+    image1: joinGameImage1,
+    image2: joinGameImage2,
+    image3: joinGameImage3,
     header: "Join a Game",
     subheader: "Join a friend and show them who the GOAT is!",
     clickFunction: () => props.setHomeState(HomeState.JOIN),
