@@ -3,7 +3,7 @@
     <v-img class="logo" :src="logoLarge" max-height="200"></v-img>
     <div class="text-parent">
       <div class="text-1">Who is the</div>
-      <div class="text-2">Goat Gamer</div>
+      <div class="text-2">Goat Gamer?</div>
     </div>
   </div>
 </template>
