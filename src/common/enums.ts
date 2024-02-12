@@ -1,3 +1,18 @@
+export enum GameType {
+  RANDOM = "Random Game Picker",
+  RANDOM_LOWEST = "Lowest Score Picks",
+  BROVSBRO = "Bro vs Bro w/ Random Games",
+  BROVSBRO_LOWEST = "Bro vs Bro w/ Lowest Score Picks",
+}
+
+export enum GamePreset {
+  NONE = "No Preset",
+  TWO_PLAYER = "1v1 ",
+  THREE_PLAYER = "3-4 Players",
+  FIVE_PLAYER = "5+ Players",
+  WEB_ONLY = "Web Only",
+}
+
 export enum GameTags {
   WEB = "Web Games",
   DAILY = "Daily Web Games",
