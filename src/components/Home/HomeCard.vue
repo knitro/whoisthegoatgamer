@@ -6,18 +6,9 @@
     @click="clickFunction"
   >
     <div class="image-container">
-      <img
-        class="card-image image-1"
-        :src="image1"
-      ></img>
-      <img
-        class="card-image image-2"
-        :src="image2"
-      ></img>
-      <img
-        class="card-image image-3"
-        :src="image3"
-      ></img>
+      <img class="card-image image-1" :src="image1" />
+      <img class="card-image image-2" :src="image2" />
+      <img class="card-image image-3" :src="image3" />
     </div>
     <div class="home-card-bottom">
       <v-card-text class="pt-6" style="position: relative">
