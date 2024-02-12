@@ -52,7 +52,7 @@
       </v-col>
     </v-row>
     <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
-      <v-card loading class="online-view-overlay">
+      <v-card loading class="center-screen">
         <v-img :src="waitingImage"></v-img>
         <v-card-title>Waiting to Join Game...</v-card-title>
 
@@ -117,7 +117,6 @@ const joinCodeRules = {
 function joinButtonPress() {
   isJoining.value = true;
   const cleanedPlayerName = playerName.value.trim();
-  localStorage.setItem("playerName", cleanedPlayerName);
   if (joinCodeValid.value && nameValid.value) {
     requestJoinMatch(joinCode.value, cleanedPlayerName).then(
       async (isRequestSuccess: boolean) => {
@@ -212,12 +211,7 @@ function nameInput() {
 function checkNameValidity() {
   const cleanedPlayerName = playerName.value.trim();
   if (cleanedPlayerName.length <= 20 && cleanedPlayerName.length > 0) {
-    console.log(
-      cleanedPlayerName,
-      "True",
-      "joinCodeValid",
-      joinCodeValid.value,
-    );
+    localStorage.setItem("playerName", cleanedPlayerName);
     return true;
   }
   return false;
@@ -243,5 +237,27 @@ function checkIfRequestStillExists(
 <style scoped lang="scss">
 .join-code-card {
   border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+  .center-screen {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    border-radius: 16px;
+  }
+}
+
+@media (min-width: 769px) {
+  .center-screen {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    border-radius: 16px;
+  }
 }
 </style>
