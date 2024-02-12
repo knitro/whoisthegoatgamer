@@ -115,18 +115,6 @@
         ></GoButton>
       </v-col>
     </v-row>
-    <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
-      <v-card loading class="online-view-overlay">
-        <v-img :src="waitingImage"></v-img>
-        <v-card-title>Waiting to Join Game...</v-card-title>
-
-        <v-card-text>
-          You have requested to join <b>{{ opponentsName }}</b
-          >'s game. Please wait as they choose to either accept or decline your
-          request.
-        </v-card-text>
-      </v-card>
-    </v-overlay>
   </div>
 </template>
 
@@ -134,8 +122,6 @@
 import { createOnlineMatch } from "@/firebase/database/database";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import waitingImage from "@/assets/images/outside.png";
-import { PlayerRequest } from "@/firebase/database/database-interfaces";
 import {
   VContainer,
   VRow,
@@ -143,12 +129,6 @@ import {
   VTextField,
   VCard,
   VCardTitle,
-  VCardSubtitle,
-  VCardText,
-  VCardActions,
-  VBtn,
-  VOverlay,
-  VImg,
 } from "vuetify/lib/components/index.mjs";
 import { GameTags, GameType, GamePreset } from "@/common/enums";
 import GoButton from "./GoButton.vue";
@@ -161,8 +141,6 @@ const playerName = ref(localStorage.getItem("playerName") ?? "");
 const nameValid = ref(checkNameValidity());
 
 const isCreating = ref(false);
-const showJoinLoadingOverlay = ref(false);
-const opponentsName = ref("");
 
 // Game Settings
 const gameType = ref<GameType>(GameType.RANDOM);
