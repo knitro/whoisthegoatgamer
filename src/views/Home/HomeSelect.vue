@@ -3,8 +3,8 @@
     <v-col
       v-for="(cardData, index) in homeCardData"
       v-bind:key="index + '-' + cardData.header"
-      cols="12"
-      md="6"
+      cols="10"
+      md="4"
     >
       <HomeCard
         :image1="cardData.image1"
