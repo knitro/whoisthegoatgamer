@@ -1,117 +1,56 @@
 <template>
-  <background-display>
-    <div class="online-view-center">
-      <GoatGamerLogo class="logo"></GoatGamerLogo>
-      <v-container fluid>
-        <v-row align-content="center" justify="center">
-          <v-col cols="6">
+  <div>
+    <v-row align-content="center" justify="center">
+      <v-col cols="10" md="8" lg="6">
+        <v-text-field
+          :autofocus="true"
+          v-model="playerName"
+          outlined
+          height="100"
+          class="online-view-text-input"
+          label="Enter your Display Name"
+          hint="This will be seen by your opponent to confirm that they have the right opponent."
+          counter="20"
+          :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
+          color="white"
+          @input="nameInput"
+        >
+        </v-text-field>
+      </v-col>
+    </v-row>
+    <v-row align-content="center" justify="center">
+      <v-col cols="10" md="6" lg="4">
+        <v-card color="rgb(206, 121, 107)" dark class="join-code-card">
+          <v-card-title class="text-h5">Join</v-card-title>
+          <v-card-subtitle>
+            Enter the code that the opponent has sent you
+          </v-card-subtitle>
+          <v-card-text>
             <v-text-field
-              :autofocus="true"
-              v-model="playerName"
+              v-model="joinCode"
               outlined
-              height="100"
-              class="online-view-text-input"
-              label="Enter your Name"
-              hint="This will be seen by your opponent to confirm that they have the right opponent."
-              counter="20"
-              :rules="[joinCodeRules.required, joinCodeRules.teamNameCount]"
-              color="white"
+              label="Join Code"
+              @input="joinCodeInput"
+              maxlength="5"
+              :rules="[joinCodeRules.required, joinCodeRules.validJoinCode]"
             >
-            </v-text-field>
-          </v-col>
-        </v-row>
-
-        <v-row align-content="center" justify="center">
-          <v-col cols="4">
-            <v-card color="rgb(206, 121, 107)" dark>
-              <v-card-title class="text-h5">Create</v-card-title>
-
-              <v-card-subtitle> Game Settings </v-card-subtitle>
-
-              <v-container fluid>
-                <v-row>
-                  <v-col cols="12">
-                    <v-select
-                      v-model="preset"
-                      label="Presets"
-                      :items="
-                        Object.keys(GameTags).map((key) => {
-                          return {
-                            title: GameTags[key as keyof typeof GameTags],
-                            value: GameTags[key as keyof typeof GameTags],
-                          };
-                        })
-                      "
-                      chips
-                      multiple
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-text-field
-                      v-model.number="pointsToWin"
-                      :rules="[
-                        joinCodeRules.required,
-                        joinCodeRules.numbersOnly,
-                      ]"
-                      label="Points Required to Finish"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-text-field
-                      v-model.number="numberOfVetos"
-                      :rules="[
-                        joinCodeRules.required,
-                        joinCodeRules.numbersOnly,
-                      ]"
-                      label="Number of Vetos per Player"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-
-              <v-card-actions>
-                <v-btn
-                  variant="text"
-                  @click="createButtonPress"
-                  :loading="isCreating"
-                >
-                  Create Game
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-          <v-col cols="4">
-            <v-card color="rgb(206, 121, 107)" dark>
-              <v-card-title class="text-h5">Join</v-card-title>
-              <v-card-subtitle>
-                Enter the code that the opponent has sent you
-              </v-card-subtitle>
-              <v-card-text>
-                <v-text-field
-                  v-model="joinCode"
-                  outlined
-                  label="Join Code"
-                  @input="joinCodeInput"
-                  maxlength="5"
-                  :rules="[joinCodeRules.required, joinCodeRules.validJoinCode]"
-                >
-                </v-text-field
-              ></v-card-text>
-              <v-card-actions>
-                <v-btn
-                  variant="text"
-                  @disabled="joinCodeValid"
-                  @click="joinButtonPress"
-                  :loading="isJoining"
-                >
-                  Join Game
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+            </v-text-field
+          ></v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="10" md="4">
+        <GoButton
+          :imageBackground="goButtonBackground"
+          :imageForeground="goButtonForeground"
+          header="Join Game"
+          :subheader="
+            joinCode != '' ? 'Request to join: ' + joinCode : 'Enter Code'
+          "
+          :clickFunction="joinButtonPress"
+          :isDisabled="!(joinCodeValid && nameValid)"
+        ></GoButton>
+      </v-col>
+    </v-row>
     <v-overlay :z-index="0" v-model="showJoinLoadingOverlay" persistent>
       <v-card loading class="online-view-overlay">
         <v-img :src="waitingImage"></v-img>
@@ -124,26 +63,21 @@
         </v-card-text>
       </v-card>
     </v-overlay>
-  </background-display>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {
-  createOnlineMatch,
-  getOnlineMatchListener,
-} from "@/firebase/database/database";
+import { getOnlineMatchListener } from "@/firebase/database/database";
 import { auth } from "@/firebase/firebase";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import waitingImage from "@/assets/images/outside.png";
-import BackgroundDisplay from "@/components/Background/BackgroundDisplay/BackgroundDisplay.vue";
 import {
   Match,
   Player,
   PlayerRequest,
 } from "@/firebase/database/database-interfaces";
 import {
-  VContainer,
   VRow,
   VCol,
   VTextField,
@@ -151,30 +85,24 @@ import {
   VCardTitle,
   VCardSubtitle,
   VCardText,
-  VCardActions,
-  VBtn,
   VOverlay,
   VImg,
 } from "vuetify/lib/components/index.mjs";
 import { requestJoinMatch } from "@/firebase/database/database-request";
-import { GameTags } from "@/common/enums";
-import GoatGamerLogo from "@/components/GoatGamerLogo/GoatGamerLogo.vue";
+import GoButton from "./GoButton.vue";
+import goButtonBackground from "@/assets/home/go-button-background.png";
+import goButtonForeground from "@/assets/home/go-button-foreground.png";
 
 const router = useRouter();
 
-const playerName = ref("");
+const playerName = ref(localStorage.getItem("playerName") ?? "");
+const nameValid = ref(checkNameValidity());
 const joinCode = ref("");
 const joinCodeValid = ref(false);
 
-const isCreating = ref(false);
 const isJoining = ref(false);
 const showJoinLoadingOverlay = ref(false);
 const opponentsName = ref("");
-
-// Game Settings
-const preset = ref<GameTags[]>([]);
-const pointsToWin = ref(10);
-const numberOfVetos = ref(1);
 
 const joinCodeRules = {
   required: (value: string) => !!value || "Required.",
@@ -186,37 +114,11 @@ const joinCodeRules = {
   numbersOnly: (value: string) => !Number.isNaN(Number.parseFloat(value)),
 };
 
-function createButtonPress() {
-  if (!isCreating.value) {
-    isCreating.value = true;
-    const cleanedPlayerName = playerName.value.trim();
-    if (cleanedPlayerName.length > 0) {
-      createOnlineMatch(
-        playerName.value,
-        preset.value,
-        pointsToWin.value,
-        numberOfVetos.value,
-      ).then((joinCode: string) => {
-        isCreating.value = false;
-        router.push({
-          name: "onlineMatch",
-          params: { id: joinCode },
-        });
-      });
-    } else {
-      isCreating.value = false;
-    }
-  }
-}
-
 function joinButtonPress() {
   isJoining.value = true;
   const cleanedPlayerName = playerName.value.trim();
-  if (
-    joinCodeValid.value &&
-    cleanedPlayerName.length <= 20 &&
-    cleanedPlayerName.length > 0
-  ) {
+  localStorage.setItem("playerName", cleanedPlayerName);
+  if (joinCodeValid.value && nameValid.value) {
     requestJoinMatch(joinCode.value, cleanedPlayerName).then(
       async (isRequestSuccess: boolean) => {
         if (!isRequestSuccess) {
@@ -299,6 +201,28 @@ function joinCodeInput() {
   }
 }
 
+function nameInput() {
+  if (checkNameValidity()) {
+    nameValid.value = true;
+  } else {
+    nameValid.value = false;
+  }
+}
+
+function checkNameValidity() {
+  const cleanedPlayerName = playerName.value.trim();
+  if (cleanedPlayerName.length <= 20 && cleanedPlayerName.length > 0) {
+    console.log(
+      cleanedPlayerName,
+      "True",
+      "joinCodeValid",
+      joinCodeValid.value,
+    );
+    return true;
+  }
+  return false;
+}
+
 function checkIfRequestStillExists(
   requests: PlayerRequest[],
   current: PlayerRequest,
@@ -317,28 +241,7 @@ function checkIfRequestStillExists(
 </script>
 
 <style scoped lang="scss">
-.logo {
-  margin: auto;
-  padding-bottom: 16px;
-}
-
-.online-view-center {
-  position: absolute;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-  width: 100%;
-}
-
-.online-view-overlay {
-  position: absolute;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-  width: 600px;
-}
-
-.online-view-text-input {
-  font-size: 28px;
+.join-code-card {
+  border-radius: 16px;
 }
 </style>
