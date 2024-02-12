@@ -3,7 +3,8 @@
     <v-col
       v-for="(cardData, index) in homeCardData"
       v-bind:key="index + '-' + cardData.header"
-      cols="4"
+      cols="12"
+      md="6"
     >
       <HomeCard
         :image1="cardData.image1"
@@ -56,8 +57,7 @@ const homeCardData: HomeCardItem[] = [
     image2: createGameImage2,
     image3: createGameImage3,
     header: "Create a Game",
-    subheader:
-      "Create your own private lobby. You must be logged in to create a lobby",
+    subheader: "Create your own private lobby and start competing!",
     clickFunction: () => props.setHomeState(HomeState.CREATE),
   },
   {
