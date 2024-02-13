@@ -1,46 +1,86 @@
 <template>
-  <div>
-    <div class="online-view-pick-ban-center">
+  <background-display>
+    <div class="online-view-overlay">
       <v-card
-        class="mx-auto"
-        max-width="344"
+        class="curved-border"
         :loading="matchData !== null && matchData?.playerRequests.length == 0"
       >
-        <v-img :src="WaitingImage" height="200px"></v-img>
+        <v-row no-gutters>
+          <v-col cols="7">
+            <v-row align-content="center" justify="center">
+              <v-col cols="12">
+                <v-img :src="WaitingImage" class="curved-border"></v-img>
+                <v-card-title>Waiting for your Opponents ... </v-card-title>
+                <v-card-subtitle>
+                  Your code is: <b>{{ code }}</b>
+                </v-card-subtitle>
+              </v-col>
+              <v-col cols="4">
+                <v-btn
+                  @click="startMatch()"
+                  variant="flat"
+                  rounded
+                  prepend-icon="mdi-play"
+                  color="green"
+                  :disabled="!isHost"
+                >
+                  Start Game
+                </v-btn>
+              </v-col>
+              <v-col cols="4">
+                <v-btn
+                  v-if="isHost"
+                  @click="cancelMatch()"
+                  variant="flat"
+                  rounded
+                  prepend-icon="mdi-close-octagon"
+                  color="red"
+                >
+                  Cancel Game
+                </v-btn>
+                <v-btn
+                  v-else
+                  @click="removeSelf()"
+                  variant="flat"
+                  rounded
+                  prepend-icon="mdi-close-octagon"
+                  color="red"
+                >
+                  Leave Game
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="5">
+            <v-list>
+              <v-list-subheader>Player List</v-list-subheader>
+              <v-list-item
+                v-for="player in matchData?.playerList"
+                v-bind:key="'confirm_' + player.id"
+                :prependAvatar="'https://robohash.org/' + player.id + '.png'"
+              >
+                <v-list-item-title>{{ player.name }}</v-list-item-title>
+                <template v-slot:append>
+                  <v-btn
+                    v-if="
+                      auth.currentUser &&
+                      auth.currentUser.uid != player.id &&
+                      isHost
+                    "
+                    @click="removeFromLobby(player.id)"
+                    variant="text"
+                    color="red"
+                    icon="mdi-exit-run"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-col>
+        </v-row>
 
-        <v-card-title> Waiting for your Opponents ... </v-card-title>
-
-        <v-card-subtitle>
-          Your code is: <b>{{ code }}</b>
-        </v-card-subtitle>
+        <v-card-title> </v-card-title>
 
         <v-divider></v-divider>
-        <div v-show="matchData && matchData?.playerList.length > 0">
-          <v-list :disabled="!isHost">
-            <v-list-subheader>Player List</v-list-subheader>
-            <v-list-item
-              v-for="(player, index) in matchData?.playerList"
-              v-bind:key="'player_' + player.id"
-            >
-              <template v-slot:append>
-                <v-btn
-                  v-if="
-                    auth.currentUser &&
-                    auth.currentUser.uid != player.id &&
-                    isHost
-                  "
-                  @click="removeFromLobby(player.id)"
-                  variant="text"
-                  color="red"
-                  icon="mdi-exit-run"
-                ></v-btn>
-              </template>
-              <v-list-item-title>
-                {{ player.name }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </div>
 
         <v-expand-transition>
           <div v-show="matchData && matchData?.playerRequests.length > 0">
@@ -75,41 +115,9 @@
             </v-list>
           </div>
         </v-expand-transition>
-
-        <v-divider></v-divider>
-        <v-row>
-          <v-col>
-            <v-btn
-              @click="startMatch()"
-              variant="flat"
-              prepend-icon="mdi-play"
-              color="green"
-              :disabled="!isHost"
-              >Start Game</v-btn
-            >
-          </v-col>
-          <v-col>
-            <v-btn
-              v-if="isHost"
-              @click="cancelMatch()"
-              variant="flat"
-              prepend-icon="mdi-close-octagon"
-              color="red"
-              >Cancel Game</v-btn
-            >
-            <v-btn
-              v-else
-              @click="removeSelf()"
-              variant="flat"
-              prepend-icon="mdi-close-octagon"
-              color="red"
-              >Leave Game</v-btn
-            >
-          </v-col>
-        </v-row>
       </v-card>
     </div>
-  </div>
+  </background-display>
 </template>
 
 <script setup lang="ts">
@@ -145,6 +153,7 @@ import {
   removePlayerListOnlineMatch,
 } from "@/firebase/database/database-players";
 import { updateStateOnlineMatch } from "@/firebase/database/database-match";
+import BackgroundDisplay from "@/components/Background/BackgroundDisplay/BackgroundDisplay.vue";
 
 const props = defineProps({
   code: {
@@ -241,12 +250,20 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.online-view-pick-ban-center {
-  display: block;
+.curved-border {
+  border-radius: 16px;
+}
+
+.online-view-overlay {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  top: 50vh;
+  left: 50vw;
   transform: translate(-50%, -50%);
   width: 1000px;
+  border-radius: 16px;
+  .ready-chip {
+    margin-left: 8px;
+    height: 36px;
+  }
 }
 </style>
