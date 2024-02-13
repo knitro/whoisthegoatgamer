@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row align-content="center" justify="center">
-      <v-col cols="10" md="8" lg="6">
+      <v-col cols="12" sm="11" md="10" lg="8" xl="6">
         <v-text-field
           :autofocus="true"
           v-model="playerName"
@@ -20,7 +20,7 @@
     </v-row>
 
     <v-row align-content="center" justify="center">
-      <v-col cols="10" md="6" lg="4">
+      <v-col cols="10" sm="9" md="6" lg="4">
         <v-card color="rgba(248, 181, 170, 0.95)" class="create-card">
           <v-card-title class="text-h6"> Tournament Structure </v-card-title>
           <v-container fluid>
@@ -81,7 +81,7 @@
           </v-container>
         </v-card>
       </v-col>
-      <v-col cols="10" md="6" lg="4">
+      <v-col cols="10" sm="9" md="6" lg="4">
         <v-card color="rgba(248, 181, 170, 0.95)" dark class="create-card">
           <v-card-title class="text-h6">Tournament Settings</v-card-title>
           <v-container fluid>
@@ -104,7 +104,7 @@
           </v-container>
         </v-card>
       </v-col>
-      <v-col cols="10" md="4" lg="4">
+      <v-col cols="10" md="4" lg="3" xl="2">
         <GoButton
           :imageBackground="goButtonBackground"
           :imageForeground="goButtonForeground"

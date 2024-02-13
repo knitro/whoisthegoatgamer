@@ -97,7 +97,7 @@ const props = defineProps({
   .image-container {
     position: relative;
     height: 300px;
-    width: 300px;
+    max-width: 300px;
     .image-1 {
       opacity: 1;
       position: absolute;
@@ -135,7 +135,7 @@ const props = defineProps({
 
   .image-container {
     height: 300px;
-    width: 300px;
+    max-width: 300px;
     position: relative;
     .image-1 {
       animation: image-1-animate 1.5s ease-in-out forwards;

@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import logoLarge from "@/assets/logo/large-logo.png";
+// This is only needed to "generate" the logo. Usage should be from the logo-full.png
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,5 @@
 <template>
-  <background-display>
+  <background-diagonal>
     <v-btn
       v-show="state != HomeState.SELECT"
       class="top-left-button"
@@ -10,9 +10,13 @@
     >
       Go Back</v-btn
     >
-    <div class="online-view-center">
-      <GoatGamerLogo class="logo"></GoatGamerLogo>
+    <div class="middle-padding-top">
       <v-container id="home-page">
+        <v-row align-content="center" justify="center">
+          <v-col cols="12" sm="11" md="10" lg="8" xl="6">
+            <v-img :src="logoFull" class="logo" />
+          </v-col>
+        </v-row>
         <HomeSelect
           v-show="state == HomeState.SELECT"
           :setHomeState="setHomeState"
@@ -21,13 +25,12 @@
         <HomeJoin v-show="state == HomeState.JOIN"></HomeJoin>
       </v-container>
     </div>
-  </background-display>
+  </background-diagonal>
 </template>
 
 <script setup lang="ts">
-import BackgroundDisplay from "@/components/Background/BackgroundDisplay/BackgroundDisplay.vue";
-import { VContainer } from "vuetify/lib/components/index.mjs";
-import GoatGamerLogo from "@/components/GoatGamerLogo/GoatGamerLogo.vue";
+import BackgroundDiagonal from "@/components/Background/BackgroundDiagonal/BackgroundDiagonal.vue";
+import logoFull from "@/assets/logo/logo-full.png";
 import { ref } from "vue";
 import HomeSelect from "./HomeSelect.vue";
 import HomeCreate from "./HomeCreate.vue";
@@ -52,6 +55,7 @@ function onBackButtonPress() {
 
 <style scoped lang="scss">
 .top-left-button {
+  position: absolute;
   margin: 16px;
   transition:
     opacity 0.5s,
@@ -73,29 +77,13 @@ function onBackButtonPress() {
   display: none;
   transform: skewX(50deg) translateX(-25vw);
 }
-
 .logo {
+  // max-width: 50vw;
   margin: auto;
   padding-bottom: 16px;
 }
 
-.online-view-center {
-  position: absolute;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-  width: 100%;
-}
-
-.online-view-overlay {
-  position: absolute;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-  width: 600px;
-}
-
-.online-view-text-input {
-  font-size: 28px;
+.middle-padding-top {
+  padding-top: 20vh;
 }
 </style>
